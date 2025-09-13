@@ -1,4 +1,16 @@
 package org.example.intershop.repository;
 
-public class PositionRepo {
+import org.example.intershop.models.entity.Position;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface PositionRepo extends JpaRepository<Position,Long> {
+
+    @Override
+    List<Position> findAll();
+
+    @Override
+    Optional<Position> findById(Long aLong);
 }
