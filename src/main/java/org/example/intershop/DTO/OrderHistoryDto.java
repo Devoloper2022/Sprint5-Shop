@@ -1,4 +1,6 @@
 package org.example.intershop.DTO;
 
-public class OrderHistoyDto {
+public class OrderHistoryDto {
+    private Long orderId;
+    private Integer count;
 }
