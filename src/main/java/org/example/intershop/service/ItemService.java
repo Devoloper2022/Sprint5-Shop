@@ -11,13 +11,11 @@ public interface ItemService {
 
     List<ItemDto> findAllItemsPagingAndSorting(String search, SortType sort, Integer pageSize, Integer pageNumber);
 
-    List<ItemDto> findAllItemsByIds(List<Long> itemIds);
 
     Long addItem(ItemDto itemDto);
 
-    void editItem(ItemDto itemDto);
+    void editItem(ItemDto itemDto, Long id);
 
     void deleteItem(Long itemId);
 
-    void updateItem(ItemDto cartItemDto);
 }

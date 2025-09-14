@@ -3,9 +3,9 @@ create table if not exists items
 (
     id      bigserial PRIMARY KEY,
     title   varchar(256) not null,
-    description text         not null,
-    imgName   varchar(256) not null,
-    price   integer
+    description text ,
+    imgName   varchar(256) ,
+    price   integer not null
 );
 
 
