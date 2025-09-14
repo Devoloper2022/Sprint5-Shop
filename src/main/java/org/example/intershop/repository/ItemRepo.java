@@ -15,8 +15,8 @@ public interface ItemRepo extends JpaRepository<Item,Long> {
             SELECT item
             FROM Item item
             WHERE :search IS NULL
-            OR item.title ILIKE %:search%
-            OR item.description ILIKE %:search%
+             OR LOWER(item.title) LIKE LOWER(CONCAT('%', :search, '%'))
+             OR LOWER(item.description) LIKE LOWER(CONCAT('%', :search, '%'))
             """)
     Page<Item> searchAllPagingAndSorting(@Param("search") String search, Pageable pageable);
 

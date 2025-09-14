@@ -13,5 +13,5 @@ public class ItemDto {
     private String description;
     private String imgPath;
     private Integer count;
-    private Integer price;
+    private Long price;
 }

@@ -2,14 +2,13 @@ package org.example.intershop.service;
 
 import org.example.intershop.DTO.ItemDto;
 import org.example.intershop.DTO.SortType;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 
 public interface ItemService {
     ItemDto getItemById(Long itemId);
 
-    List<ItemDto> findAllItemsPagingAndSorting(String search, SortType sort, Integer pageSize, Integer pageNumber);
+    Page<ItemDto> findAllItemsPagingAndSorting(String search, SortType sort, Integer pageSize, Integer pageNumber);
 
 
     Long addItem(ItemDto itemDto);
