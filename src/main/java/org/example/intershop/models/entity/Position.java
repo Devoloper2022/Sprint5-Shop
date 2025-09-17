@@ -14,5 +14,5 @@ public class Position {
     private Long id;
     private Long orderId;
     private Long itemId;
-    private Long quantity;
+    private Integer quantity;
 }

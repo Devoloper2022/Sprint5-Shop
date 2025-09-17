@@ -32,7 +32,6 @@ public class MainController {
     ) {
 
         Page<ItemDto> items = itemService.findAllItemsPagingAndSorting(search, sort, pageSize, pageNumber);
-
         model.addAttribute("items", items.getContent());
         model.addAttribute("search", search);
         model.addAttribute("sort", sort);

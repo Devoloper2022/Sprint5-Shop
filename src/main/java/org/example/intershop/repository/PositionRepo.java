@@ -8,6 +8,9 @@ import java.util.Optional;
 
 public interface PositionRepo extends JpaRepository<Position,Long> {
 
+    List<Position> findAllByOrderId(Long ordersId);
+    List<Position> findAllByItemIdAndOrderId(Long userId, Long orderId);
+
     @Override
     List<Position> findAll();
 

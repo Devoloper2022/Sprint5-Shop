@@ -23,6 +23,7 @@ public class ItemController {
             Model model) {
 
         ItemDto item = itemService.getItemById(id);
+        System.out.println(item);
         model.addAttribute("item", item);
 
         return "item";

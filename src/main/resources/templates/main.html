@@ -9,7 +9,7 @@
 <a href="/orders" style="float:right;">
     <b>ЗАКАЗЫ &cudarrr;</b>
 </a>
-<a href="/cart/items" style="float:right;">
+<a href="/cart" style="float:right;">
     <b>КОРЗИНА &cudarrr;</b>
 </a>
 <form method="GET" action="/items/add">
@@ -35,9 +35,9 @@
                 <p>
                     <label for="pageSize">Число товаров: </label>
                     <select id="pageSize" name="pageSize" onchange="this.form.submit()">
-                        <option value="5" th:selected="${paging.getPageSize()==1}">1</option>
-                        <option value="10" th:selected="${paging.getPageSize()==2}">2</option>
-                        <option value="20" th:selected="${paging.getPageSize()==3}">3</option>
+                        <option value="5" th:selected="${paging.getPageSize()==5}">5</option>
+                        <option value="10" th:selected="${paging.getPageSize()==10}">10</option>
+                        <option value="20" th:selected="${paging.getPageSize()==20}">20</option>
                         <option value="50" th:selected="${paging.getPageSize()==50}">50</option>
                         <option value="100" th:selected="${paging.getPageSize()==100}">100</option>
                     </select>
@@ -59,7 +59,7 @@
                 <tr>
                     <td>
                         <a th:href="${'/items/'+item.getId()}">
-                            <img width="300" height="300" th:src="${'http://localhost:8087/'+item.getImgPath()}">
+                            <img width="300" height="300" th:src="@{'/images/' + ${item.getImgPath()}}" />
                         </a>
                     </td>
                 </tr>
@@ -68,7 +68,7 @@
                         <b th:text="${item.getTitle()}"></b>
                     </td>
                     <td>
-                        <b th:text="${item.getPrice()}+' руб.'"></b>
+                        <b th:text="${item.getPrice()}+' тг.'"></b>
                     </td>
                 </tr>
                 <tr>

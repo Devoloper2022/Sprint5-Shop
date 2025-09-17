@@ -3,7 +3,7 @@ package org.example.intershop.models.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "item")
@@ -17,7 +17,8 @@ public class Item {
     @Column
     private String description;
     @Column
-    private String imgName;
+    private String imgname;
     @Column(nullable = false)
     private Long price;
+
 }
