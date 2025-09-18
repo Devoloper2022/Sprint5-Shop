@@ -11,12 +11,12 @@ public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int totalPrice;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int totalQuantity;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int totalPosition;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private boolean status;
 }

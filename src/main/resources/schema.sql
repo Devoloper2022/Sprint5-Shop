@@ -9,6 +9,20 @@ create table if not exists item
 );
 
 
+
+create table if not exists orders
+(
+    id      bigserial PRIMARY KEY,
+    status   BOOLEAN not null,
+    total_position integer not null ,
+    total_price   integer not null,
+    total_quantity   integer not null
+);
+
+insert into orders(status,total_position,total_price,total_quantity)
+values (false,0,0,0);
+
+
 insert into item(title, description, imgName, price)
 values ('Sonik', 'asdfasdfasdfasdfasdfasdf ',  '1.jpeg',30);
 insert into item(title, description, imgName, price)

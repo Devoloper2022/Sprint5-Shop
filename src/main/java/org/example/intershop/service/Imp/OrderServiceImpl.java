@@ -48,7 +48,6 @@ public class OrderServiceImpl implements OrderService {
         OrderDto dto = new OrderDto();
         List<ItemDto> list = new ArrayList<>();
 
-//        OrderEntity entity = repo.findById(orderId).get();
         List<Position> positions = positionRepo.findAllByOrderId(orderId);
 
         for (Position position : positions) {
@@ -64,12 +63,68 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void addPosition(Long ItemId, Long OrderId) {
+    public void addPosition( Long orderId, Long itemId) {
+        OrderEntity entity = new OrderEntity();
+        Position position = new Position();
+        if (!repo.existsByIdAndStatusFalse(orderId)) {
+            entity = repo.save(entity);
+        }
+        else {
+            entity = repo.findById(orderId).get();
+        }
 
+        if (!positionRepo.existsByItemIdAndStatusFalse(itemId)) {
+            position = positionRepo.save(position);
+        }
+        else {
+            position = positionRepo.findByItemIdAndStatusFalse(itemId).get();
+        }
+
+        position.setOrderId(entity.getId());
+        positionRepo.save(position);
     }
 
     @Override
-    public void removePosition(Long ItemId, Long OrderId) {
+    public void removePosition(Long positionID) {
+        positionRepo.deleteById(positionID);
+    }
+
+
+    @Override
+    public void incrementPosition(Long itemId) {
+        Position position = new Position();
+        if (!positionRepo.existsByItemIdAndStatusFalse(itemId)) {
+            position = positionRepo.save(position);
+        }
+        else {
+            position = positionRepo.findByItemIdAndStatusFalse(itemId).get();
+        }
+
+        position.setQuantity(position.getQuantity() + 1);
+        positionRepo.save(position);
+    }
+
+    @Override
+    public void decrementPosition(Long itemId) {
+        Position position = new Position();
+        if (!positionRepo.existsByItemIdAndStatusFalse(itemId)) {
+            position = positionRepo.save(position);
+        }
+        else {
+            position = positionRepo.findByItemIdAndStatusFalse(itemId).get();
+        }
+
+        if (position.getQuantity() > 0) {
+            position.setQuantity(position.getQuantity() - 1);
+        }
+
+        if (position.getQuantity() == 0) {
+            positionRepo.deleteById(position.getId());
+        }else {
+            positionRepo.save(position);
+        }
 
     }
+
+
 }

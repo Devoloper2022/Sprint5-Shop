@@ -46,7 +46,8 @@ public class ItemServiceImpl implements ItemService {
                 item.getDescription(),
                 item.getImgname(),
                 0,
-                item.getPrice()
+                item.getPrice(),
+                0L
         ));
     }
 

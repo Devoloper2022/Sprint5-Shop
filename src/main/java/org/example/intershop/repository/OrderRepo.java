@@ -10,7 +10,8 @@ public interface OrderRepo extends JpaRepository<OrderEntity,Long> {
 
     List<OrderEntity> findAll();
 
-    List<OrderEntity> findAllByStatus(boolean status);
+    Optional<OrderEntity> findByIdAndStatusFalse(Long orderId);
+    boolean existsByIdAndStatusFalse(Long orderId);
 
     @Override
     Optional<OrderEntity> findById(Long aLong);
