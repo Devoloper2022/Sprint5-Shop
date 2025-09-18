@@ -36,7 +36,15 @@ public class ItemServiceImpl implements ItemService {
     ) {
         Item item = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
-        return itemMapper.toItemDto(item);
+
+        Position position = null;
+        if (positionRepo.findById(id).isPresent()) {
+            position = positionRepo.findById(id).get();
+        }
+        ItemDto itemDto = itemMapper.toItemDto(item);
+        itemDto.setCount(  position != null ? position.getQuantity() : 0);
+        itemDto.setPositionID(position != null ? position.getId() : null);
+        return itemDto;
 
     }
 
