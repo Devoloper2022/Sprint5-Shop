@@ -1,13 +1,14 @@
 package org.example.intershop.controller;
 
 
+import org.example.intershop.DTO.ActionType;
 import org.example.intershop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/orders")
 public class OrderController {
 
@@ -15,18 +16,43 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping
-    public String getCartPage() {
-
-//        List<ItemDto> items =null;//= cartService.getCart();
-//        Long total = items.stream()
-//                .mapToLong(item -> item.getPrice() * item.getCount())
-//                .sum();
-//
-//        model.addAttribute("items", items);
-//        model.addAttribute("total", total);
-//        model.addAttribute("empty", items.isEmpty());
+    public String getOrdersPage(Model model) {
+//        orderService.
 
         return "orders";
+    }
+
+
+    @GetMapping("/{id}")
+    public String getOrderPage(@PathVariable Long id, Model model) {
+//        orderService.
+
+        return "order";
+    }
+
+    @PostMapping("/action/{id}")
+    public String countItem(
+            @PathVariable("id") Long itemId,
+            @RequestParam String action
+    ) {
+        if (action.equals(ActionType.PLUS.getName())) {
+            orderService.incrementPosition(itemId);
+        }else if (action.equals(ActionType.MINUS.getName())) {
+            orderService.decrementPosition(itemId);
+        }
+
+
+        return "redirect:/";
+    }
+    @PostMapping("/cart/{id}")
+    public String addToCart(
+            @PathVariable("id") Long itemId,
+            @RequestParam String action
+    ) {
+
+        orderService.addPosition(1L ,itemId);
+
+        return "redirect:/";
     }
 
 }

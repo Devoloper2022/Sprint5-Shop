@@ -76,10 +76,12 @@
                 </tr>
                 <tr>
                     <td>
-                        <form th:action="${'/main/items/'+item.getId()}" method="post">
+                        <form th:action="${'/orders/action/'+item.getId()}" method="post">
                             <button name="action" value="minus">-</button>
                             <span th:text="${item.getCount()}"></span>
                             <button name="action" value="plus">+</button>
+                        </form>
+                        <form th:action="${'/orders/cart/'+item.getId()}" method="post">
                             <button name="action" value="plus" th:if="${item.getCount()==0}" style="float:right;">В
                                 корзину
                             </button>

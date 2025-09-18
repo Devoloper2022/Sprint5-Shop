@@ -6,13 +6,18 @@ import org.example.intershop.DTO.ItemDto;
 import org.example.intershop.DTO.MainDTO;
 import org.example.intershop.DTO.SortType;
 import org.example.intershop.models.entity.Item;
+import org.example.intershop.models.entity.Position;
 import org.example.intershop.models.mapper.ItemMapper;
 import org.example.intershop.repository.ItemRepo;
+import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +27,8 @@ public class ItemServiceImpl implements ItemService {
     private ItemRepo repo;
 
     private final ItemMapper itemMapper;
+    @Autowired
+    private PositionRepo positionRepo;
 
 
     @Override
@@ -40,15 +47,30 @@ public class ItemServiceImpl implements ItemService {
 
 
 
-        return items.map(item -> new ItemDto(
-                item.getId(),
-                item.getTitle(),
-                item.getDescription(),
-                item.getImgname(),
-                0,
-                item.getPrice(),
-                0L
-        ));
+        List<ItemDto> dtoList = items.stream()
+                .map(item -> {
+                    Position position = null;
+                    int total = 0;
+                    if (positionRepo.existsByItemIdAndStatusFalse(item.getId())) {
+                        position = positionRepo.findByItemIdAndStatusFalse(item.getId()).orElse(null);
+                        if (position != null) {
+                            total = position.getQuantity();
+                        }
+                    }
+
+                    return new ItemDto(
+                            item.getId(),
+                            item.getTitle(),
+                            item.getDescription(),
+                            item.getImgname(),
+                            total,
+                            item.getPrice(),
+                            position != null ? position.getId() : 0L
+                    );
+                })
+                .toList();  // ✅ Collect into List
+
+        return new PageImpl<>(dtoList, page, items.getTotalElements());
     }
 
 

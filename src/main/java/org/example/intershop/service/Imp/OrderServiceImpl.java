@@ -67,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity entity = new OrderEntity();
         Position position = new Position();
         if (!repo.existsByIdAndStatusFalse(orderId)) {
+            entity.setStatus(false);
             entity = repo.save(entity);
         }
         else {
@@ -75,11 +76,13 @@ public class OrderServiceImpl implements OrderService {
 
         if (!positionRepo.existsByItemIdAndStatusFalse(itemId)) {
             position = positionRepo.save(position);
+            position.setQuantity(1);
         }
         else {
             position = positionRepo.findByItemIdAndStatusFalse(itemId).get();
         }
 
+        position.setItemId(itemId);
         position.setOrderId(entity.getId());
         positionRepo.save(position);
     }
@@ -93,25 +96,27 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void incrementPosition(Long itemId) {
         Position position = new Position();
+        System.out.println("Sanat" + positionRepo.existsByItemIdAndStatusFalse(itemId));
         if (!positionRepo.existsByItemIdAndStatusFalse(itemId)) {
             position = positionRepo.save(position);
+            position.setQuantity(0);
         }
         else {
             position = positionRepo.findByItemIdAndStatusFalse(itemId).get();
         }
 
         position.setQuantity(position.getQuantity() + 1);
+        position.setItemId(itemId);
         positionRepo.save(position);
     }
 
     @Override
     public void decrementPosition(Long itemId) {
         Position position = new Position();
-        if (!positionRepo.existsByItemIdAndStatusFalse(itemId)) {
-            position = positionRepo.save(position);
-        }
-        else {
+        if (positionRepo.existsByItemIdAndStatusFalse(itemId)) {
             position = positionRepo.findByItemIdAndStatusFalse(itemId).get();
+        }else {
+            return;
         }
 
         if (position.getQuantity() > 0) {

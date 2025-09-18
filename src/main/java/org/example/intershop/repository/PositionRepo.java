@@ -12,7 +12,9 @@ public interface PositionRepo extends JpaRepository<Position,Long> {
     Optional<Position> findByItemIdAndOrderId(Long itemId, Long orderId);
     boolean existsByItemIdAndOrderId(Long userId, Long orderId);
     Optional<Position> findByItemIdAndStatusFalse(Long itemId);
+
     boolean existsByItemIdAndStatusFalse(Long itemId);
+    List<Position> findAllByStatusFalse();
 
     int countByOrderId(Long orderId);
 
