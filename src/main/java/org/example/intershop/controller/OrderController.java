@@ -46,11 +46,15 @@ public class OrderController {
     }
     @PostMapping("/cart/{id}")
     public String addToCart(
-            @PathVariable("id") Long itemId,
+            @PathVariable("id") Long id,
             @RequestParam String action
     ) {
+        if (action.equals(ActionType.PLUS.getName())) {
+            orderService.addPosition(1L ,id);
+        }else if (action.equals(ActionType.MINUS.getName())) {
+            orderService.removePosition(id);
+        }
 
-        orderService.addPosition(1L ,itemId);
 
         return "redirect:/";
     }

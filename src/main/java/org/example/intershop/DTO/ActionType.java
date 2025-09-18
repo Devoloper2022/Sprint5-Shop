@@ -7,8 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ActionType {
     PLUS("plus", "Добавить один товар"),
-    MINUS("minus", "Удалить один товар"),
-    DELETE("delete", "Удалить товар из корзины)");
+    MINUS("minus", "Удалить один товар");
 
     private final String name;
     private final String description;

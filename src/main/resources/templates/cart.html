@@ -34,11 +34,14 @@
                 </tr>
                 <tr>
                     <td>
-                        <form th:action="${'/cart/items/'+item.getId()}" method="post">
+                        <form th:action="${'/orders/action/'+item.getId()}" method="post">
                             <button name="action" value="minus">-</button>
                             <span th:text="${item.getCount()}"></span>
                             <button name="action" value="plus">+</button>
-                            <button name="action" value="delete" style="float:right;">&cross;</button>
+                        </form>
+                        <form th:action="${'/orders/cart/'+item.getPositionID()}" method="post">
+                            <button name="action" value="minus" style="float:right;">&cross;</button>
+
                         </form>
                     </td>
                 </tr>
@@ -47,14 +50,14 @@
     </tr>
     <tr>
         <td style="text-align:right">
-            <b th:text="'Итого: '+${total}+' тг.'"></b>
+            <b th:text="'Итого: '+${total}+' тг.'" th:if="${items != null and !items.isEmpty()}"></b>
         </td>
     </tr>
     <tr>
         <td style="text-align:right">
-<!--            <form action="/buy" method="post" th:if="${!empty}">-->
-<!--                <button>Купить</button>-->
-<!--            </form>-->
+            <form action="/buy" method="post" th:if="${items != null and !items.isEmpty()}">
+                <button>Купить</button>
+            </form>
         </td>
     </tr>
 </table>
