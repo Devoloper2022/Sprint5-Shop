@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  intershop:
+    build: .
+    image: intershop
+    container_name: intershop-container
+    ports:
+      - 9091:9091
+    depends_on:
+      - intershop-db
+    restart: on-failure
