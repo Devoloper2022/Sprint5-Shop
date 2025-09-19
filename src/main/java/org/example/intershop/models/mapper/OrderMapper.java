@@ -11,5 +11,6 @@ public interface OrderMapper {
 
     @Mapping(source = "totalPrice", target = "totalSum")
     @Mapping(source = "totalQuantity", target = "quantity")
+    @Mapping(target = "items", ignore = true)
     OrderDto toOrderDto(OrderEntity order);
 }

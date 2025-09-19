@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderHistoryDto {
-    private Integer count=0;
-    private Integer price=0;
+    private int count=0;
+    private int price=0;
     private List<OrderDto> list;
 }

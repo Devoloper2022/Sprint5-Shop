@@ -3,7 +3,6 @@ package org.example.intershop.service;
 import org.example.intershop.DTO.OrderDto;
 import org.example.intershop.DTO.OrderHistoryDto;
 
-import java.util.List;
 
 public interface OrderService {
 

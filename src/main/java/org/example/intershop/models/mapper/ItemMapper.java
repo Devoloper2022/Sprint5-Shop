@@ -14,6 +14,8 @@ import java.util.List;
 public interface ItemMapper {
 
     @Mapping(source = "imgname", target = "imgPath")
+    @Mapping(target = "count", ignore = true)
+    @Mapping(target = "positionID", ignore = true)
     ItemDto toItemDto(Item itemEntity);
 
     List<ItemDto> toItemDtos(List<Item> itemEntities);

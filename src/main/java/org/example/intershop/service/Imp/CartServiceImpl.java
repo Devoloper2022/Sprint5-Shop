@@ -17,8 +17,7 @@ import java.util.List;
 
 @Service
 public class CartServiceImpl implements CartService {
-    @Autowired
-    private ItemRepo itemRepo;
+
     @Autowired
     PositionRepo positionRepo;
     @Autowired
