@@ -25,8 +25,15 @@
             </table>
             <p>
                 <b th:text="${'Сумма: '+order.getTotalSum()}+' тг.'"></b>
-                <b th:text="${'кол. вещей: '+order.getQuantity()}+' тг.'"></b>
-                <b th:text="${'кол. позиций: '+order.getItems().size()}+' тг.'"></b>
+
+            </p>
+            <p>
+                <b th:text="${'кол. вещей: '+order.getQuantity()}+' шт.'"></b>
+
+            </p>
+            <p>
+
+                <b th:text="${'кол. позиций: '+order.getItems().size()}+' шт.'"></b>
             </p>
         </td>
     </tr>

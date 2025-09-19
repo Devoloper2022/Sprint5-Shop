@@ -32,6 +32,7 @@ public class CartServiceImpl implements CartService {
     public Long pay() {
         OrderEntity order = orderRepo.findByIdAndStatusFalse(1l).get();
         OrderEntity newEntity = new OrderEntity();
+        newEntity.setStatus(true);
         newEntity = orderRepo.save(newEntity);
 
         List<Position> positions = positionRepo.findAllByOrderId(order.getId());

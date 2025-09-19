@@ -3,16 +3,16 @@ package org.example.intershop.service.Imp;
 import org.example.intershop.DTO.ItemDto;
 import org.example.intershop.DTO.OrderDto;
 import org.example.intershop.DTO.OrderHistoryDto;
-import org.example.intershop.models.entity.Item;
+
 import org.example.intershop.models.entity.OrderEntity;
 import org.example.intershop.models.entity.Position;
-import org.example.intershop.repository.ItemRepo;
+
 import org.example.intershop.repository.OrderRepo;
 import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.ItemService;
 import org.example.intershop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,8 +21,7 @@ import java.util.List;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private ItemRepo itemRepo;
+
     @Autowired
     PositionRepo positionRepo;
     @Autowired
@@ -66,9 +65,12 @@ public class OrderServiceImpl implements OrderService {
             itemDto.setCount(position.getQuantity());
             itemDto.setPositionID(position.getId());
             dto.setQuantity(dto.getQuantity()+itemDto.getCount());
+            dto.setTotalSum((int) (dto.getTotalSum()+(itemDto.getCount()*itemDto.getPrice())));
             list.add(itemDto);
         }
 
+
+        dto.setId(orderId);
         dto.setItems(list);
         return dto;
     }
