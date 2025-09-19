@@ -1,9 +1,7 @@
 package org.example.intershop.controller;
 
-import org.example.intershop.DTO.ItemDto;
 import org.example.intershop.DTO.OrderDto;
 import org.example.intershop.service.CartService;
-import org.example.intershop.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

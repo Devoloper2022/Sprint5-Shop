@@ -22,9 +22,9 @@ public interface ItemRepo extends JpaRepository<Item,Long> {
             """)
     Page<Item> searchAllPagingAndSorting(@Param("search") String search, Pageable pageable);
 
-    void deleteById(@Param("id") Long id);
+    void deleteById(Long id);
 
     @Override
-    Optional<Item> findById(Long Long);
+    Optional<Item> findById(Long id);
 
 }

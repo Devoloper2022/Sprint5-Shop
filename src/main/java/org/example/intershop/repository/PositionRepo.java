@@ -18,14 +18,5 @@ public interface PositionRepo extends JpaRepository<Position,Long> {
 
     List<Position> findAllByStatusFalse();
 
-    void deleteById(Long id);
 
-
-
-
-    @Override
-    List<Position> findAll();
-
-    @Override
-    Optional<Position> findById(Long aLong);
 }

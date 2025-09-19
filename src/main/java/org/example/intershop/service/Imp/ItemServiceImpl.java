@@ -11,6 +11,7 @@ import org.example.intershop.models.mapper.ItemMapper;
 import org.example.intershop.repository.ItemRepo;
 import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.ItemService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +23,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
+    @Autowired
     private final ItemRepo repo;
+
+    @Autowired
     private final ItemMapper itemMapper;
+    @Autowired
     private  final PositionRepo positionRepo;
 
 

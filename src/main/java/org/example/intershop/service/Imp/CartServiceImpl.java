@@ -19,7 +19,7 @@ import java.util.List;
 public class CartServiceImpl implements CartService {
 
     @Autowired
-    PositionRepo positionRepo;
+    private PositionRepo positionRepo;
     @Autowired
     private OrderRepo orderRepo;
 

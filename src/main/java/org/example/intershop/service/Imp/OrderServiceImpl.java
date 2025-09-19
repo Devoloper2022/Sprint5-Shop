@@ -23,7 +23,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Autowired
-    PositionRepo positionRepo;
+    private PositionRepo positionRepo;
     @Autowired
     private OrderRepo repo;
 
