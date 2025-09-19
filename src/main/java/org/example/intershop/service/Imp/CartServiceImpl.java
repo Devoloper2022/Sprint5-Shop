@@ -2,6 +2,7 @@ package org.example.intershop.service.Imp;
 
 import org.example.intershop.DTO.ItemDto;
 import org.example.intershop.DTO.OrderDto;
+import org.example.intershop.models.entity.OrderEntity;
 import org.example.intershop.models.entity.Position;
 import org.example.intershop.repository.ItemRepo;
 import org.example.intershop.repository.OrderRepo;
@@ -28,8 +29,19 @@ public class CartServiceImpl implements CartService {
 
 
     @Override
-    public void pay() {
+    public Long pay() {
+        OrderEntity order = orderRepo.findByIdAndStatusFalse(1l).get();
+        OrderEntity newEntity = new OrderEntity();
+        newEntity = orderRepo.save(newEntity);
 
+        List<Position> positions = positionRepo.findAllByOrderId(order.getId());
+        for (Position position : positions) {
+            position.setOrderId(newEntity.getId());
+            position.setStatus(true);
+            positionRepo.save(position);
+        }
+
+        return newEntity.getId();
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.List;
 public interface OrderService {
     Long createOrder();
 
-    List<OrderHistoryDto> findOrders();
+    OrderHistoryDto findOrders();
 
     OrderDto findOrderById(Long orderId);
 

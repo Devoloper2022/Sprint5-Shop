@@ -17,7 +17,7 @@ public class OrderController {
 
     @GetMapping
     public String getOrdersPage(Model model) {
-//        orderService.
+        model.addAttribute("orders",orderService.findOrders());
 
         return "orders";
     }
@@ -25,7 +25,7 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public String getOrderPage(@PathVariable Long id, Model model) {
-//        orderService.
+        model.addAttribute("order",orderService.findOrderById(id));
 
         return "order";
     }

@@ -13,18 +13,20 @@
     <b>ГЛАВНАЯ &cudarrr;</b>
 </a>
 <table style="width:70%;margin-left:auto;margin-right:auto;">
-    <tr th:each="order : ${orders}">
+    <tr th:each="order : ${orders.getList()}">
         <td>
             <h2>
                 <a th:text="${'Заказ №'+order.getId()}" th:href="${'/orders/'+order.getId()}"></a>
             </h2>
             <table>
                 <tr th:each="item : ${order.getItems()}">
-                    <td th:text="${item.getTitle()+' ('+item.getCount()+' шт.) '+(item.getPrice()*item.getCount())+' руб.'}"></td>
+                    <td th:text="${item.getTitle()+' ('+item.getCount()+' шт.) '+(item.getPrice()*item.getCount())+' тг.'}"></td>
                 </tr>
             </table>
             <p>
-                <b th:text="${'Сумма: '+order.getTotalSum()}+' руб.'"></b>
+                <b th:text="${'Сумма: '+order.getTotalSum()}+' тг.'"></b>
+                <b th:text="${'кол. вещей: '+order.getQuantity()}+' тг.'"></b>
+                <b th:text="${'кол. позиций: '+order.getItems().size()}+' тг.'"></b>
             </p>
         </td>
     </tr>

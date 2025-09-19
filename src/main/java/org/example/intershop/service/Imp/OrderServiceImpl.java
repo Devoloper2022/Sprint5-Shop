@@ -38,9 +38,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderHistoryDto> findOrders() {
+    public OrderHistoryDto findOrders() {
+        OrderHistoryDto dto = new OrderHistoryDto();
+        List<OrderEntity> orders = repo.findAllByStatusTrue();
+        List<OrderDto> orderList = new ArrayList<>();
 
-        return List.of();
+        orders.forEach(order -> {
+            OrderDto orderDto= findOrderById(order.getId());
+            orderList.add(orderDto);
+            dto.setPrice(dto.getPrice()+orderDto.getTotalSum());
+        });
+
+        dto.setCount(orderList.size());
+        dto.setList(orderList);
+        return dto;
     }
 
     @Override
@@ -54,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
             ItemDto itemDto = itemService.getItemById(position.getItemId());
             itemDto.setCount(position.getQuantity());
             itemDto.setPositionID(position.getId());
-
+            dto.setQuantity(dto.getQuantity()+itemDto.getCount());
             list.add(itemDto);
         }
 

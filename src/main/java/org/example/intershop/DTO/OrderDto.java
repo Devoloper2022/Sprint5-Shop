@@ -12,6 +12,7 @@ import java.util.List;
 public class OrderDto {
     private Long id;
     private List<ItemDto> items;
-    private Integer totalSum;
+    private Integer totalSum=0;
+    private Integer quantity=0;
 
 }
