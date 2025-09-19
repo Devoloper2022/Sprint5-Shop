@@ -15,16 +15,16 @@
 <a href="/" style="float:right;">
     <b>ГЛАВНАЯ &cudarrr;</b>
 </a>
-<a>
-    <form method="GET" th:action="${'/items/'+item.getId()+'/edit'}">
-        <button style="float:right;">РЕДАКТИРОВАТЬ ТОВАР</button>
-    </form>
-</a>
-<a>
-    <form method="POST" th:action="${'/items/'+item.getId()+'/delete'}">
-        <button style="float:right;">УДАЛИТЬ ТОВАР</button>
-    </form>
-</a>
+<!--<a>-->
+<!--    <form method="GET" th:action="${'/items/'+item.getId()+'/edit'}">-->
+<!--        <button style="float:right;">РЕДАКТИРОВАТЬ ТОВАР</button>-->
+<!--    </form>-->
+<!--</a>-->
+<!--<a>-->
+<!--    <form method="POST" th:action="${'/items/'+item.getId()+'/delete'}">-->
+<!--        <button style="float:right;">УДАЛИТЬ ТОВАР</button>-->
+<!--    </form>-->
+<!--</a>-->
 <div style="width:70%;margin-left:auto;margin-right:auto;">
     <p>
         <img width="300" height="300" th:src="@{'/images/' + ${item.getImgPath()}}" />
