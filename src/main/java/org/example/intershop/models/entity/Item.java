@@ -3,7 +3,7 @@ package org.example.intershop.models.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
+
 
 @Entity
 @Table(name = "item")

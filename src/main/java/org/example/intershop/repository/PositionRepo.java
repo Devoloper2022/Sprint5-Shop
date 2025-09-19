@@ -9,14 +9,12 @@ import java.util.Optional;
 public interface PositionRepo extends JpaRepository<Position,Long> {
 
     List<Position> findAllByOrderId(Long ordersId);
-    Optional<Position> findByItemIdAndOrderId(Long itemId, Long orderId);
-    boolean existsByItemIdAndOrderId(Long userId, Long orderId);
+
     Optional<Position> findByItemIdAndStatusFalse(Long itemId);
 
     boolean existsByItemIdAndStatusFalse(Long itemId);
-    List<Position> findAllByStatusFalse();
 
-    int countByOrderId(Long orderId);
+    List<Position> findAllByStatusFalse();
 
     void deleteById(Long id);
 

@@ -6,7 +6,7 @@ import org.example.intershop.DTO.OrderHistoryDto;
 import java.util.List;
 
 public interface OrderService {
-    Long createOrder();
+
 
     OrderHistoryDto findOrders();
 

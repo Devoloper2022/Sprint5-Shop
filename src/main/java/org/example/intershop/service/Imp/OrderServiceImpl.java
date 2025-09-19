@@ -31,10 +31,7 @@ public class OrderServiceImpl implements OrderService {
     private ItemService itemService;
 
 
-    @Override
-    public Long createOrder() {
-        return 0L;
-    }
+
 
     @Override
     public OrderHistoryDto findOrders() {
