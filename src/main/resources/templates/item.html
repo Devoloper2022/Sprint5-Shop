@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Витрина товаров</title>
+</head>
+
+<body>
+<a href="/orders" style="float:right;">
+    <b>ЗАКАЗЫ &cudarrr;</b>
+</a>
+<a href="/cart" style="float:right;">
+    <b>КОРЗИНА &cudarrr;</b>
+</a>
+<a href="/" style="float:right;">
+    <b>ГЛАВНАЯ &cudarrr;</b>
+</a>
+<!--<a>-->
+<!--    <form method="GET" th:action="${'/items/'+item.getId()+'/edit'}">-->
+<!--        <button style="float:right;">РЕДАКТИРОВАТЬ ТОВАР</button>-->
+<!--    </form>-->
+<!--</a>-->
+<!--<a>-->
+<!--    <form method="POST" th:action="${'/items/'+item.getId()+'/delete'}">-->
+<!--        <button style="float:right;">УДАЛИТЬ ТОВАР</button>-->
+<!--    </form>-->
+<!--</a>-->
+<div style="width:70%;margin-left:auto;margin-right:auto;">
+    <p>
+        <img width="300" height="300" th:src="@{'/images/' + ${item.getImgPath()}}" />
+    </p>
+    <p>
+        <b th:text="${item.getTitle()}"></b>
+        <b th:text="${item.getPrice()}+' тг.'" style="text-align:right;"></b>
+    </p>
+    <p>
+        <span th:text="${item.getDescription()}"></span>
+    </p>
+    <form th:action="${'/orders/action/'+item.getId()}" method="post">
+        <button name="action" value="minus">-</button>
+        <span th:text="${item.getCount()}"></span>
+        <button name="action" value="plus">+</button>
+    </form>
+    <form th:action="${'/orders/cart/'+item.getId()}" method="post">
+        <button name="action" value="plus" style="float:right;">В
+            корзину
+        </button>
+    </form>
+</div>
+</body>
+
+</html>
