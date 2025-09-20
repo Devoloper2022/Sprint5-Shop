@@ -1,6 +1,9 @@
 package org.example.intershop.controller;
 
 import org.example.intershop.DTO.OrderHistoryDto;
+import org.example.intershop.repository.ItemRepo;
+import org.example.intershop.repository.OrderRepo;
+import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.OrderService;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,12 @@ public class OrderControllerTest {
 
     @MockitoBean
     private OrderService orderService;
+    @MockitoBean
+    PositionRepo positionRepo;
+    @MockitoBean
+    OrderRepo orderRepo;
+    @MockitoBean
+    ItemRepo itemRepo;
     @Test
     void testGetOrdersPage() throws Exception {
         OrderHistoryDto orderHistoryDto = new OrderHistoryDto();

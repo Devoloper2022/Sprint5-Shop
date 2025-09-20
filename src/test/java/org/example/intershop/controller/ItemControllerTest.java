@@ -1,6 +1,9 @@
 package org.example.intershop.controller;
 
 import org.example.intershop.DTO.ItemDto;
+import org.example.intershop.models.entity.Position;
+import org.example.intershop.repository.OrderRepo;
+import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.ItemService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,14 +17,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ItemController.class)
-public class ItemControllerTest {
+ class ItemControllerTest {
 
 
     @Autowired
-    private MockMvc mockMvc;
+     MockMvc mockMvc;
 
     @MockitoBean
-    private ItemService itemService; // мок вместо настоящего сервиса
+     ItemService itemService;
+
+    @MockitoBean
+    PositionRepo positionRepo;
+    @MockitoBean
+    OrderRepo orderRepo;
 
     @Test
     void testGetItemById() throws Exception {

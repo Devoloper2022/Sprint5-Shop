@@ -1,6 +1,9 @@
 package org.example.intershop.controller;
 
 import org.example.intershop.DTO.ItemDto;
+import org.example.intershop.repository.ItemRepo;
+import org.example.intershop.repository.OrderRepo;
+import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.ItemService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,6 +27,13 @@ public class MainControllerTest {
 
     @MockitoBean
     private ItemService itemService;
+
+    @MockitoBean
+    PositionRepo positionRepo;
+    @MockitoBean
+    OrderRepo orderRepo;
+    @MockitoBean
+    ItemRepo itemRepo;
 
     @Test
     void getMainPage_shouldReturnMainViewWithModelAttributes() throws Exception {

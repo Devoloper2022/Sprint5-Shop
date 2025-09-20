@@ -2,6 +2,9 @@ package org.example.intershop.controller;
 
 import org.example.intershop.DTO.ItemDto;
 import org.example.intershop.DTO.OrderDto;
+import org.example.intershop.repository.ItemRepo;
+import org.example.intershop.repository.OrderRepo;
+import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.CartService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.ui.Model;
 
 import java.util.List;
@@ -22,6 +26,13 @@ public class CartControllerTest {
 
     @Mock
     private CartService cartService;
+
+    @MockitoBean
+    PositionRepo positionRepo;
+    @MockitoBean
+    OrderRepo orderRepo;
+    @MockitoBean
+    ItemRepo itemRepo;
 
     @Mock
     private Model model;
