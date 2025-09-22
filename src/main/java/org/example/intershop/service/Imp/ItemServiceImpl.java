@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -33,69 +35,61 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public ItemDto getItemById(Long id
-    ) {
-        Item item = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
-
-        Position position = null;
-        if (positionRepo.findById(id).isPresent()) {
-            position = positionRepo.findById(id).get();
-        }
-        ItemDto itemDto = itemMapper.toItemDto(item);
-        itemDto.setCount(position != null ? position.getQuantity() : 0);
-        itemDto.setPositionID(position != null ? position.getId() : null);
-        return itemDto;
-
-    }
-
-    @Override
-    public Page<ItemDto> findAllItemsPagingAndSorting(String search, SortType sort, Integer pageSize, Integer pageNumber) {
-        Pageable page = new MainDTO(pageSize, pageNumber - 1).getPageable(sort);
-        Page<Item> items = repo.searchAllPagingAndSorting(search, page);
-
-
-        List<ItemDto> dtoList = items.stream()
-                .map(item -> {
-                    Position position = null;
-                    int total = 0;
-                    if (positionRepo.existsByItemIdAndStatusFalse(item.getId())) {
-                        position = positionRepo.findByItemIdAndStatusFalse(item.getId()).orElse(null);
-                        if (position != null) {
-                            total = position.getQuantity();
-                        }
-                    }
-
-                    return new ItemDto(
-                            item.getId(),
-                            item.getTitle(),
-                            item.getDescription(),
-                            item.getImgname(),
-                            total,
-                            item.getPrice(),
-                            position != null ? position.getId() : 0L
-                    );
-                })
-                .toList();  // ✅ Collect into List
-
-        return new PageImpl<>(dtoList, page, items.getTotalElements());
+    public Mono<ItemDto> getItemById(Long id) {
+        return repo.findById(id)
+                .switchIfEmpty(Mono.error(new RuntimeException("Item not found")))
+                .flatMap(item ->
+                        positionRepo.findById(id)
+                                .defaultIfEmpty(new Position())
+                                .map(position -> {
+                                    ItemDto itemDto = itemMapper.toItemDto(item);
+                                    if (position.getId() != null) {
+                                        itemDto.setCount(position.getQuantity());
+                                        itemDto.setPositionID(position.getId());
+                                    }
+                                    else {
+                                        itemDto.setCount(0);
+                                        itemDto.setPositionID(null);
+                                    }
+                                    return itemDto;
+                                })
+                );
     }
 
 
     @Override
-    public Long addItem(ItemDto itemDto) {
-        return 0L;
+    public Flux<ItemDto> findAllItemsPagingAndSorting(String search, SortType sort, Integer pageSize, Integer pageNumber) {
+        int offset = Math.max(0, (pageNumber - 1) * pageSize);
+
+        return repo.searchAll(search, pageSize, offset, sort.fromValue(sort))
+                .flatMap(item ->
+                        positionRepo.findByItemIdAndStatusFalse(item.getId()) // Mono<Position>
+                                .defaultIfEmpty(new Position()) // если позиции нет
+                                .map(position -> new ItemDto(
+                                        item.getId(),
+                                        item.getTitle(),
+                                        item.getDescription(),
+                                        item.getImgname(),
+                                        position.getId() != null ? position.getQuantity() : 0,
+                                        item.getPrice(),
+                                        position.getId() != null ? position.getId() : 0L
+                                ))
+                );
     }
 
     @Override
-    public void editItem(ItemDto itemDto, Long id) {
-
+    public Mono<Void> addItem(ItemDto itemDto) {
+        return null;
     }
 
     @Override
-    public void deleteItem(Long id
-    ) {
+    public Mono<Void> editItem(ItemDto itemDto, Long id) {
+        return null;
+    }
 
+    @Override
+    public Mono<Void> deleteItem(Long itemId) {
+        return null;
     }
 
 

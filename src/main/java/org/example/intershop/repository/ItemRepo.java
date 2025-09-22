@@ -17,11 +17,13 @@ public interface ItemRepo extends R2dbcRepository<Item, Long> {
                 FROM items
                 WHERE (:search IS NULL OR LOWER(title) LIKE LOWER(CONCAT('%', :search, '%'))
                        OR LOWER(description) LIKE LOWER(CONCAT('%', :search, '%')))
-                LIMIT :limit OFFSET :offset
+                ORDER BY :sortColumn
+                LIMIT :limit OFFSET :offset 
             """)
     Flux<Item> searchAll(@Param("search") String search,
                          @Param("limit") int limit,
-                         @Param("offset") long offset);
+                         @Param("offset") long offset,
+                         @Param("sortColumn") String sortColumn);
 
     Mono<Void> deleteById(Long id);
 

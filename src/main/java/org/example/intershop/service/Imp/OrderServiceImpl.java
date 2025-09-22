@@ -14,6 +14,8 @@ import org.example.intershop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,114 +34,135 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public OrderHistoryDto findOrders() {
-        OrderHistoryDto dto = new OrderHistoryDto();
-        List<OrderEntity> orders = repo.findAllByStatusTrue();
-        List<OrderDto> orderList = new ArrayList<>();
-
-        orders.forEach(order -> {
-            OrderDto orderDto = findOrderById(order.getId());
-            orderList.add(orderDto);
-            dto.setPrice(dto.getPrice() + orderDto.getTotalSum());
-        });
-
-        dto.setCount(orderList.size());
-        dto.setList(orderList);
-        return dto;
+    public Mono<OrderHistoryDto> findOrders() {
+        return repo.findAllByStatusTrue() // Flux<OrderEntity>
+                .flatMap(order ->
+                        findOrderById(order.getId()) // Mono<OrderDto>
+                )
+                .collectList() // Mono<List<OrderDto>>
+                .map(orderList -> {
+                    OrderHistoryDto dto = new OrderHistoryDto();
+                    dto.setList(orderList);
+                    dto.setCount(orderList.size());
+                    dto.setPrice(
+                            (int) orderList.stream()
+                                    .mapToDouble(OrderDto::getTotalSum)
+                                    .sum()
+                    );
+                    return dto;
+                });
     }
 
     @Override
-    public OrderDto findOrderById(Long orderId) {
-        OrderDto dto = new OrderDto();
-        List<ItemDto> list = new ArrayList<>();
+    public Mono<OrderDto> findOrderById(Long orderId) {
+        Flux<ItemDto> itemsFlux = positionRepo.findAllByOrderId(orderId) // Flux<Position>
+                .flatMap(position ->
+                        itemService.getItemById(position.getItemId()) // Mono<ItemDto>
+                                .map(itemDto -> {
+                                    itemDto.setCount(position.getQuantity());
+                                    itemDto.setPositionID(position.getId());
+                                    return itemDto;
+                                })
+                );
 
-        List<Position> positions = positionRepo.findAllByOrderId(orderId);
+        return itemsFlux
+                .collectList() // Собираем в список только на финальном шаге
+                .map(itemDtos -> {
+                    OrderDto dto = new OrderDto();
+                    dto.setId(orderId);
+                    dto.setItems(itemDtos);
 
-        for (Position position : positions) {
-            ItemDto itemDto = itemService.getItemById(position.getItemId());
-            itemDto.setCount(position.getQuantity());
-            itemDto.setPositionID(position.getId());
-            dto.setQuantity(dto.getQuantity() + itemDto.getCount());
-            dto.setTotalSum((int) (dto.getTotalSum() + (itemDto.getCount() * itemDto.getPrice())));
-            list.add(itemDto);
-        }
+                    int totalQuantity = itemDtos.stream()
+                            .mapToInt(ItemDto::getCount)
+                            .sum();
 
+                    int totalSum = itemDtos.stream()
+                            .mapToInt(i -> Math.toIntExact(i.getCount() * i.getPrice()))
+                            .sum();
 
-        dto.setId(orderId);
-        dto.setItems(list);
-        return dto;
+                    dto.setQuantity(totalQuantity);
+                    dto.setTotalSum(totalSum);
+                    return dto;
+                });
     }
 
     @Override
-    public void addPosition(Long orderId, Long itemId) {
-        OrderEntity entity = new OrderEntity();
-        Position position = new Position();
-        if (!repo.existsByIdAndStatusFalse(orderId)) {
-            entity.setStatus(false);
-            entity = repo.save(entity);
-        }
-        else {
-            entity = repo.findById(orderId).get();
-        }
+    public Mono<Void> addPosition(Long orderId, Long itemId) {
+        return repo.existsByIdAndStatusFalse(orderId)
+                .flatMap(exists -> {
+                    Mono<OrderEntity> orderMono;
+                    if (!exists) {
+                        OrderEntity newOrder = new OrderEntity();
+                        newOrder.setStatus(false);
+                        orderMono = repo.save(newOrder);
+                    } else {
+                        orderMono = repo.findById(orderId);
+                    }
 
-        if (!positionRepo.existsByItemIdAndStatusFalse(itemId)) {
-            position = positionRepo.save(position);
-            position.setQuantity(1);
-        }
-        else {
-            position = positionRepo.findByItemIdAndStatusFalse(itemId).get();
-        }
-
-        position.setItemId(itemId);
-        position.setOrderId(entity.getId());
-        positionRepo.save(position);
+                    return orderMono.flatMap(orderEntity ->
+                            positionRepo.existsByItemIdAndStatusFalse(itemId)
+                                    .flatMap(positionExists -> {
+                                        Mono<Position> positionMono;
+                                        if (!positionExists) {
+                                            Position newPosition = new Position();
+                                            newPosition.setItemId(itemId);
+                                            newPosition.setOrderId(orderEntity.getId());
+                                            newPosition.setQuantity(1);
+                                            positionMono = positionRepo.save(newPosition);
+                                        } else {
+                                            positionMono = positionRepo.findByItemIdAndStatusFalse(itemId)
+                                                    .flatMap(existing -> {
+                                                        existing.setQuantity(existing.getQuantity() + 1);
+                                                        existing.setOrderId(orderEntity.getId());
+                                                        return positionRepo.save(existing);
+                                                    });
+                                        }
+                                        return positionMono.then();
+                                    })
+                    );
+                })
+                .then(); // завершаем Mono<Void>
     }
 
     @Override
-    public void removePosition(Long positionID) {
-        positionRepo.deleteById(positionID);
-    }
-
-
-    @Override
-    public void incrementPosition(Long itemId) {
-        Position position = new Position();
-        System.out.println("Sanat" + positionRepo.existsByItemIdAndStatusFalse(itemId));
-        if (!positionRepo.existsByItemIdAndStatusFalse(itemId)) {
-            position = positionRepo.save(position);
-            position.setQuantity(0);
-        }
-        else {
-            position = positionRepo.findByItemIdAndStatusFalse(itemId).get();
-        }
-
-        position.setQuantity(position.getQuantity() + 1);
-        position.setItemId(itemId);
-        positionRepo.save(position);
+    public Mono<Void> removePosition(Long positionId) {
+        return positionRepo.deleteById(positionId);
     }
 
     @Override
-    public void decrementPosition(Long itemId) {
-        Position position = new Position();
-        if (positionRepo.existsByItemIdAndStatusFalse(itemId)) {
-            position = positionRepo.findByItemIdAndStatusFalse(itemId).get();
-        }
-        else {
-            return;
-        }
-
-        if (position.getQuantity() > 0) {
-            position.setQuantity(position.getQuantity() - 1);
-        }
-
-        if (position.getQuantity() == 0) {
-            positionRepo.deleteById(position.getId());
-        }
-        else {
-            positionRepo.save(position);
-        }
-
+    public Mono<Void> incrementPosition(Long itemId) {
+        return positionRepo.existsByItemIdAndStatusFalse(itemId)
+                .flatMap(exists -> {
+                    if (!exists) {
+                        Position newPosition = new Position();
+                        newPosition.setItemId(itemId);
+                        newPosition.setQuantity(1); // сразу ставим 1
+                        return positionRepo.save(newPosition).then();
+                    } else {
+                        return positionRepo.findByItemIdAndStatusFalse(itemId)
+                                .flatMap(existing -> {
+                                    existing.setQuantity(existing.getQuantity() + 1);
+                                    return positionRepo.save(existing).then();
+                                });
+                    }
+                });
     }
+
+    @Override
+    public Mono<Void> decrementPosition(Long itemId) {
+        return positionRepo.findByItemIdAndStatusFalse(itemId)
+                .flatMap(position -> {
+                    if (position.getQuantity() > 1) {
+                        position.setQuantity(position.getQuantity() - 1);
+                        return positionRepo.save(position).then();
+                    } else {
+                        // если количество станет 0 или уже 1 → удаляем позицию
+                        return positionRepo.deleteById(position.getId());
+                    }
+                })
+                .then(); // если позиции нет, просто завершаем пустым Mono
+    }
+
 
 
 }
