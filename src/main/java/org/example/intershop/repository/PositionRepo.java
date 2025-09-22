@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PositionRepo extends JpaRepository<Position,Long> {
+public interface PositionRepo extends JpaRepository<Position, Long> {
 
     List<Position> findAllByOrderId(Long ordersId);
 

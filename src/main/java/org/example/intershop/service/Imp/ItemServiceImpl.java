@@ -29,7 +29,7 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private final ItemMapper itemMapper;
     @Autowired
-    private  final PositionRepo positionRepo;
+    private final PositionRepo positionRepo;
 
 
     @Override
@@ -43,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
             position = positionRepo.findById(id).get();
         }
         ItemDto itemDto = itemMapper.toItemDto(item);
-        itemDto.setCount(  position != null ? position.getQuantity() : 0);
+        itemDto.setCount(position != null ? position.getQuantity() : 0);
         itemDto.setPositionID(position != null ? position.getId() : null);
         return itemDto;
 
@@ -53,7 +53,6 @@ public class ItemServiceImpl implements ItemService {
     public Page<ItemDto> findAllItemsPagingAndSorting(String search, SortType sort, Integer pageSize, Integer pageNumber) {
         Pageable page = new MainDTO(pageSize, pageNumber - 1).getPageable(sort);
         Page<Item> items = repo.searchAllPagingAndSorting(search, page);
-
 
 
         List<ItemDto> dtoList = items.stream()

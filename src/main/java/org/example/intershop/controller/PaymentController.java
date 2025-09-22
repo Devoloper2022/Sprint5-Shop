@@ -19,7 +19,7 @@ public class PaymentController {
     @GetMapping
     public String getCartPage(Model model) {
 
-         OrderDto dto = cartService.getBin();
+        OrderDto dto = cartService.getBin();
 
         Long total = dto.getItems().stream()
                 .mapToLong(item -> item.getPrice() * item.getCount())
@@ -33,14 +33,13 @@ public class PaymentController {
     }
 
 
-
     @PostMapping("/pay")
     public String pay(
             Model model
     ) {
 
-       Long id=cartService.pay();
+        Long id = cartService.pay();
 
-        return "redirect:/orders/"+id;
+        return "redirect:/orders/" + id;
     }
 }

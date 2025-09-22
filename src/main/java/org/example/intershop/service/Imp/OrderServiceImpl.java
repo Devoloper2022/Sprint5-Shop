@@ -31,8 +31,6 @@ public class OrderServiceImpl implements OrderService {
     private ItemService itemService;
 
 
-
-
     @Override
     public OrderHistoryDto findOrders() {
         OrderHistoryDto dto = new OrderHistoryDto();
@@ -40,9 +38,9 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDto> orderList = new ArrayList<>();
 
         orders.forEach(order -> {
-            OrderDto orderDto= findOrderById(order.getId());
+            OrderDto orderDto = findOrderById(order.getId());
             orderList.add(orderDto);
-            dto.setPrice(dto.getPrice()+orderDto.getTotalSum());
+            dto.setPrice(dto.getPrice() + orderDto.getTotalSum());
         });
 
         dto.setCount(orderList.size());
@@ -61,8 +59,8 @@ public class OrderServiceImpl implements OrderService {
             ItemDto itemDto = itemService.getItemById(position.getItemId());
             itemDto.setCount(position.getQuantity());
             itemDto.setPositionID(position.getId());
-            dto.setQuantity(dto.getQuantity()+itemDto.getCount());
-            dto.setTotalSum((int) (dto.getTotalSum()+(itemDto.getCount()*itemDto.getPrice())));
+            dto.setQuantity(dto.getQuantity() + itemDto.getCount());
+            dto.setTotalSum((int) (dto.getTotalSum() + (itemDto.getCount() * itemDto.getPrice())));
             list.add(itemDto);
         }
 
@@ -73,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void addPosition( Long orderId, Long itemId) {
+    public void addPosition(Long orderId, Long itemId) {
         OrderEntity entity = new OrderEntity();
         Position position = new Position();
         if (!repo.existsByIdAndStatusFalse(orderId)) {
@@ -125,7 +123,8 @@ public class OrderServiceImpl implements OrderService {
         Position position = new Position();
         if (positionRepo.existsByItemIdAndStatusFalse(itemId)) {
             position = positionRepo.findByItemIdAndStatusFalse(itemId).get();
-        }else {
+        }
+        else {
             return;
         }
 
@@ -135,7 +134,8 @@ public class OrderServiceImpl implements OrderService {
 
         if (position.getQuantity() == 0) {
             positionRepo.deleteById(position.getId());
-        }else {
+        }
+        else {
             positionRepo.save(position);
         }
 

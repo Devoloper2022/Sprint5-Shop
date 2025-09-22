@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ItemRepo extends JpaRepository<Item,Long> {
+public interface ItemRepo extends JpaRepository<Item, Long> {
 
     @Query("""
             SELECT item

@@ -17,7 +17,7 @@ public class OrderController {
 
     @GetMapping
     public String getOrdersPage(Model model) {
-        model.addAttribute("orders",orderService.findOrders());
+        model.addAttribute("orders", orderService.findOrders());
 
         return "orders";
     }
@@ -25,7 +25,7 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public String getOrderPage(@PathVariable Long id, Model model) {
-        model.addAttribute("order",orderService.findOrderById(id));
+        model.addAttribute("order", orderService.findOrderById(id));
 
         return "order";
     }
@@ -37,21 +37,24 @@ public class OrderController {
     ) {
         if (action.equals(ActionType.PLUS.getName())) {
             orderService.incrementPosition(itemId);
-        }else if (action.equals(ActionType.MINUS.getName())) {
+        }
+        else if (action.equals(ActionType.MINUS.getName())) {
             orderService.decrementPosition(itemId);
         }
 
 
         return "redirect:/";
     }
+
     @PostMapping("/cart/{id}")
     public String addToCart(
             @PathVariable("id") Long id,
             @RequestParam String action
     ) {
         if (action.equals(ActionType.PLUS.getName())) {
-            orderService.addPosition(1L ,id);
-        }else if (action.equals(ActionType.MINUS.getName())) {
+            orderService.addPosition(1L, id);
+        }
+        else if (action.equals(ActionType.MINUS.getName())) {
             orderService.removePosition(id);
         }
 

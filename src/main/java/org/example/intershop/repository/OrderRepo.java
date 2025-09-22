@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OrderRepo extends JpaRepository<OrderEntity,Long> {
+public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
 
     List<OrderEntity> findAll();
 
     Optional<OrderEntity> findByIdAndStatusFalse(Long orderId);
+
     boolean existsByIdAndStatusFalse(Long orderId);
+
     List<OrderEntity> findAllByStatusTrue();
 
 }

@@ -12,7 +12,10 @@ public interface OrderService {
     OrderDto findOrderById(Long orderId);
 
     void addPosition(Long orderId, Long itemId);
+
     void removePosition(Long positionId);
+
     void incrementPosition(Long ItemId);
+
     void decrementPosition(Long ItemId);
 }
