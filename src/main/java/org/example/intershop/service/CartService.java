@@ -1,9 +1,10 @@
 package org.example.intershop.service;
 
 import org.example.intershop.DTO.OrderDto;
+import reactor.core.publisher.Mono;
 
 public interface CartService {
-    Long pay();
+    Mono<Long> pay();
 
-    OrderDto getBin();
+    Mono<OrderDto>  getBin();
 }

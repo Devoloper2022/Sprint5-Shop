@@ -12,13 +12,9 @@ import lombok.Data;
 public class OrderEntity {
     @Id
     private Long id;
-
     private int totalPrice;
-
     private int totalQuantity;
-
     private int totalPosition;
-
     private boolean status;
 }
 

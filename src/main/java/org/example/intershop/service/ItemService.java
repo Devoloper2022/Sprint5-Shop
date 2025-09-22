@@ -3,18 +3,20 @@ package org.example.intershop.service;
 import org.example.intershop.DTO.ItemDto;
 import org.example.intershop.DTO.SortType;
 import org.springframework.data.domain.Page;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 
 public interface ItemService {
-    ItemDto getItemById(Long itemId);
+    Mono<ItemDto> getItemById(Long itemId);
 
-    Page<ItemDto> findAllItemsPagingAndSorting(String search, SortType sort, Integer pageSize, Integer pageNumber);
+    Flux<ItemDto> findAllItemsPagingAndSorting(String search, SortType sort, Integer pageSize, Integer pageNumber);
 
 
-    Long addItem(ItemDto itemDto);
+    Mono<Void> addItem(ItemDto itemDto);
 
-    void editItem(ItemDto itemDto, Long id);
+    Mono<Void> editItem(ItemDto itemDto, Long id);
 
-    void deleteItem(Long itemId);
+    Mono<Void> deleteItem(Long itemId);
 
 }

@@ -2,20 +2,21 @@ package org.example.intershop.service;
 
 import org.example.intershop.DTO.OrderDto;
 import org.example.intershop.DTO.OrderHistoryDto;
+import reactor.core.publisher.Mono;
 
 
 public interface OrderService {
 
 
-    OrderHistoryDto findOrders();
+    Mono<OrderHistoryDto> findOrders();
 
-    OrderDto findOrderById(Long orderId);
+    Mono<OrderDto> findOrderById(Long orderId);
 
-    void addPosition(Long orderId, Long itemId);
+    Mono<Void> addPosition(Long orderId, Long itemId);
 
-    void removePosition(Long positionId);
+    Mono<Void> removePosition(Long positionId);
 
-    void incrementPosition(Long ItemId);
+    Mono<Void> incrementPosition(Long ItemId);
 
-    void decrementPosition(Long ItemId);
+    Mono<Void> decrementPosition(Long ItemId);
 }
