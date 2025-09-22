@@ -1,27 +1,30 @@
 package org.example.intershop.models.entity;
 
-import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
 
-@Entity
-@Table(name = "item")
+
+@Table(name = "items")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Item {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+
     private String title;
-    @Column
+
     private String description;
-    @Column
+
     private String imgname;
-    @Column(nullable = false)
+
     private Long price;
 
 }

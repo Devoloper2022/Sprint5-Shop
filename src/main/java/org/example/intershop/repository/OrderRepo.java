@@ -1,21 +1,20 @@
 package org.example.intershop.repository;
 
 import org.example.intershop.models.entity.OrderEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
-public interface OrderRepo extends JpaRepository<OrderEntity, Long> {
+public interface OrderRepo extends R2dbcRepository<OrderEntity, Long> {
 
-    List<OrderEntity> findAll();
+    @Override
+    Flux<OrderEntity> findAll();
 
-    Optional<OrderEntity> findByIdAndStatusFalse(Long orderId);
+    Mono<OrderEntity> findByIdAndStatusFalse(Long orderId);
 
-    boolean existsByIdAndStatusFalse(Long orderId);
+    Mono<Boolean> existsByIdAndStatusFalse(Long orderId);
 
-    List<OrderEntity> findAllByStatusTrue();
-
+    Flux<OrderEntity> findAllByStatusTrue();
 }

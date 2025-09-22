@@ -1,30 +1,31 @@
 package org.example.intershop.repository;
 
 import org.example.intershop.models.entity.Item;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.r2dbc.repository.Query;
+import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.Optional;
 
 @Repository
-public interface ItemRepo extends JpaRepository<Item, Long> {
+public interface ItemRepo extends R2dbcRepository<Item, Long> {
 
     @Query("""
-            SELECT item
-            FROM Item item
-            WHERE :search IS NULL
-             OR LOWER(item.title) LIKE LOWER(CONCAT('%', :search, '%'))
-             OR LOWER(item.description) LIKE LOWER(CONCAT('%', :search, '%'))
+                SELECT *
+                FROM items
+                WHERE (:search IS NULL OR LOWER(title) LIKE LOWER(CONCAT('%', :search, '%'))
+                       OR LOWER(description) LIKE LOWER(CONCAT('%', :search, '%')))
+                LIMIT :limit OFFSET :offset
             """)
-    Page<Item> searchAllPagingAndSorting(@Param("search") String search, Pageable pageable);
+    Flux<Item> searchAll(@Param("search") String search,
+                         @Param("limit") int limit,
+                         @Param("offset") long offset);
 
-    void deleteById(Long id);
+    Mono<Void> deleteById(Long id);
 
     @Override
-    Optional<Item> findById(Long id);
+    Mono<Item> findById(Long id);
 
 }

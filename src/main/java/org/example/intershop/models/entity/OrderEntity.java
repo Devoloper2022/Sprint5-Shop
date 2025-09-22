@@ -1,22 +1,24 @@
 package org.example.intershop.models.entity;
 
 
-import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 import lombok.Data;
 
-@Entity
-@Table(name = "orders")
 @Data
+@Table(name = "orders")
+@EqualsAndHashCode(of = "id")
 public class OrderEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = true)
+
     private int totalPrice;
-    @Column(nullable = true)
+
     private int totalQuantity;
-    @Column(nullable = true)
+
     private int totalPosition;
-    @Column(nullable = true)
+
     private boolean status;
 }
+
