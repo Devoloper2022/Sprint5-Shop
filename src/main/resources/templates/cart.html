@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Корзина товаров</title>
+</head>
+
+<body>
+<a href="/orders" style="float:right;">
+    <b>ЗАКАЗЫ &cudarrr;</b>
+</a>
+<a href="/" style="float:right;">
+    <b>ГЛАВНАЯ &cudarrr;</b>
+</a>
+<table style="width:70%;margin-left:auto;margin-right:auto;">
+    <tr th:each="item : ${items}">
+        <td>
+            <table>
+                <tr>
+                    <td>
+                        <img width="300" height="300" th:src="@{'/images/' + ${item.getImgPath()}}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b th:text="${item.getTitle()}"></b>
+                    </td>
+                    <td>
+                        <b th:text="${item.getPrice()}+' руб.'"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td th:text="${item.getDescription()}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <form th:action="${'/orders/action/'+item.getId()}" method="post">
+                            <button name="action" value="minus">-</button>
+                            <span th:text="${item.getCount()}"></span>
+                            <button name="action" value="plus">+</button>
+                        </form>
+                        <form th:action="${'/orders/cart/'+item.getPositionID()}" method="post">
+                            <button name="action" value="minus" style="float:right;">&cross;</button>
+
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align:right">
+            <b th:text="'Итого: '+${total}+' тг.'" th:if="${items != null and !items.isEmpty()}"></b>
+        </td>
+    </tr>
+    <tr>
+        <td style="text-align:right">
+            <form action="/cart/pay" method="post" th:if="${items != null and !items.isEmpty()}">
+                <button>Купить</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+
+</html>
