@@ -1,9 +1,8 @@
 package org.example.intershop.service.Imp;
 
-import org.example.intershop.DTO.ItemDto;
 import org.example.intershop.DTO.OrderDto;
 import org.example.intershop.models.entity.OrderEntity;
-import org.example.intershop.models.entity.Position;
+
 import org.example.intershop.repository.OrderRepo;
 import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.CartService;
@@ -12,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class CartServiceImpl implements CartService {

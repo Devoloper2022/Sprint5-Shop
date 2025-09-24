@@ -9,7 +9,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 
 
-@Table(name = "item")
+@Table(name = "items")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

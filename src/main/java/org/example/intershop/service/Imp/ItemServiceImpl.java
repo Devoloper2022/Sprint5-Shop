@@ -5,21 +5,19 @@ import lombok.RequiredArgsConstructor;
 import org.example.intershop.DTO.ItemDto;
 import org.example.intershop.DTO.MainDTO;
 import org.example.intershop.DTO.SortType;
-import org.example.intershop.models.entity.Item;
 import org.example.intershop.models.entity.Position;
 import org.example.intershop.models.mapper.ItemMapper;
 import org.example.intershop.repository.ItemRepo;
 import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.ItemService;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -61,20 +59,31 @@ public class ItemServiceImpl implements ItemService {
     public Flux<ItemDto> findAllItemsPagingAndSorting(String search, SortType sort, Integer pageSize, Integer pageNumber) {
         int offset = Math.max(0, (pageNumber - 1) * pageSize);
 
-        return repo.searchAll(search, pageSize, offset, sort.fromValue(sort))
-                .flatMap(item ->
-                        positionRepo.findByItemIdAndStatusFalse(item.getId()) // Mono<Position>
-                                .defaultIfEmpty(new Position()) // если позиции нет
-                                .map(position -> new ItemDto(
-                                        item.getId(),
-                                        item.getTitle(),
-                                        item.getDescription(),
-                                        item.getImgname(),
-                                        position.getId() != null ? position.getQuantity() : 0,
-                                        item.getPrice(),
-                                        position.getId() != null ? position.getId() : 0L
-                                ))
-                );
+        Pageable pageable = PageRequest.of( pageNumber, pageSize, new MainDTO(pageSize,pageNumber).getPageable(sort).getSort());
+
+        return repo
+                .findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        search == null ? "" : search,
+                        search == null ? "" : search,
+                        pageable
+                ).map(itemMapper::toItemDto);
+
+
+//        return repo.searchAll(search, sort.fromValue(sort), pageSize, offset).map(itemMapper::toItemDto);
+//        return repo.searchAll(search, pageSize, offset, sort.fromValue(sort))
+//                .flatMap(item ->
+//                        positionRepo.findByItemIdAndStatusFalse(item.getId()) // Mono<Position>
+//                                .defaultIfEmpty(new Position()) // если позиции нет
+//                                .map(position -> new ItemDto(
+//                                        item.getId(),
+//                                        item.getTitle(),
+//                                        item.getDescription(),
+//                                        item.getImgname(),
+//                                        position.getId() != null ? position.getQuantity() : 0,
+//                                        item.getPrice(),
+//                                        position.getId() != null ? position.getId() : 0L
+//                                ))
+//                );
     }
 
     @Override
