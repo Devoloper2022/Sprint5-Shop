@@ -41,7 +41,7 @@ public class ItemServiceTest {
     @Test
     void testGetItemById_whenPositionExists() {
         Item item = new Item(1L, "Title", "Desc", "img.png", 100L);
-        Position position = new Position(10L, 1L ,1L ,10, false);
+        Position position = new Position(10L, 1L, 1L, 10, false);
         ItemDto dto = new ItemDto(1L, "Title", "Desc", "img.png", 10, 100L, 10L);
 
         when(itemRepo.findById(1L)).thenReturn(Mono.just(item));

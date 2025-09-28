@@ -69,64 +69,64 @@ public class OrderServiceTest {
                 .verifyComplete();
     }
 
-        @Test
-        void testAddPosition_whenOrderDoesNotExist_createsNewOrderAndPosition() {
-            Long orderId = 1L;
-            Long itemId = 100L;
+    @Test
+    void testAddPosition_whenOrderDoesNotExist_createsNewOrderAndPosition() {
+        Long orderId = 1L;
+        Long itemId = 100L;
 
-            OrderEntity savedOrder = new OrderEntity();
-            savedOrder.setId(orderId);
-            savedOrder.setStatus(false);
+        OrderEntity savedOrder = new OrderEntity();
+        savedOrder.setId(orderId);
+        savedOrder.setStatus(false);
 
-            Position newPosition = new Position();
-            newPosition.setId(10L);
-            newPosition.setItemId(itemId);
-            newPosition.setOrderId(orderId);
-            newPosition.setQuantity(1);
+        Position newPosition = new Position();
+        newPosition.setId(10L);
+        newPosition.setItemId(itemId);
+        newPosition.setOrderId(orderId);
+        newPosition.setQuantity(1);
 
-            when(orderRepo.existsByIdAndStatusFalse(orderId)).thenReturn(Mono.just(false));
-            when(orderRepo.save(any(OrderEntity.class))).thenReturn(Mono.just(savedOrder));
-
-
-            when(positionRepo.existsByItemIdAndStatusFalse(itemId)).thenReturn(Mono.just(false));
-            when(positionRepo.save(any(Position.class))).thenReturn(Mono.just(newPosition));
-
-            StepVerifier.create(orderService.addPosition(orderId, itemId))
-                    .verifyComplete();
-
-            verify(orderRepo).save(any(OrderEntity.class));
-            verify(positionRepo).save(any(Position.class));
-        }
-
-        @Test
-        void testAddPosition_whenOrderExists_addsPosition() {
-            Long orderId = 2L;
-            Long itemId = 200L;
-
-            OrderEntity existingOrder = new OrderEntity();
-            existingOrder.setId(orderId);
-            existingOrder.setStatus(false);
-
-            Position existingPosition = new Position();
-            existingPosition.setId(20L);
-            existingPosition.setItemId(itemId);
-            existingPosition.setOrderId(orderId);
-            existingPosition.setQuantity(1);
+        when(orderRepo.existsByIdAndStatusFalse(orderId)).thenReturn(Mono.just(false));
+        when(orderRepo.save(any(OrderEntity.class))).thenReturn(Mono.just(savedOrder));
 
 
-            when(orderRepo.existsByIdAndStatusFalse(orderId)).thenReturn(Mono.just(true));
-            when(orderRepo.findById(orderId)).thenReturn(Mono.just(existingOrder));
+        when(positionRepo.existsByItemIdAndStatusFalse(itemId)).thenReturn(Mono.just(false));
+        when(positionRepo.save(any(Position.class))).thenReturn(Mono.just(newPosition));
+
+        StepVerifier.create(orderService.addPosition(orderId, itemId))
+                .verifyComplete();
+
+        verify(orderRepo).save(any(OrderEntity.class));
+        verify(positionRepo).save(any(Position.class));
+    }
+
+    @Test
+    void testAddPosition_whenOrderExists_addsPosition() {
+        Long orderId = 2L;
+        Long itemId = 200L;
+
+        OrderEntity existingOrder = new OrderEntity();
+        existingOrder.setId(orderId);
+        existingOrder.setStatus(false);
+
+        Position existingPosition = new Position();
+        existingPosition.setId(20L);
+        existingPosition.setItemId(itemId);
+        existingPosition.setOrderId(orderId);
+        existingPosition.setQuantity(1);
 
 
-            when(positionRepo.existsByItemIdAndStatusFalse(itemId)).thenReturn(Mono.just(false));
-            when(positionRepo.save(any(Position.class))).thenReturn(Mono.just(existingPosition));
+        when(orderRepo.existsByIdAndStatusFalse(orderId)).thenReturn(Mono.just(true));
+        when(orderRepo.findById(orderId)).thenReturn(Mono.just(existingOrder));
 
-            StepVerifier.create(orderService.addPosition(orderId, itemId))
-                    .verifyComplete();
 
-            verify(orderRepo).findById(orderId);
-            verify(positionRepo).save(any(Position.class));
-        }
+        when(positionRepo.existsByItemIdAndStatusFalse(itemId)).thenReturn(Mono.just(false));
+        when(positionRepo.save(any(Position.class))).thenReturn(Mono.just(existingPosition));
+
+        StepVerifier.create(orderService.addPosition(orderId, itemId))
+                .verifyComplete();
+
+        verify(orderRepo).findById(orderId);
+        verify(positionRepo).save(any(Position.class));
+    }
 
     @Test
     void testIncrementPosition_whenPositionDoesNotExist_createsNew() {
