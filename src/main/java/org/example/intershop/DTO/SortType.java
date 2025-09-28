@@ -20,13 +20,4 @@ public enum SortType {
             case PRICE -> Sort.by("price").ascending();
         };
     }
-
-
-    public String fromValue(SortType sort) {
-        return switch (sort) {
-            case NO -> "id";
-            case ALPHA -> "title";
-            case PRICE -> "price";
-        };
-    }
 }

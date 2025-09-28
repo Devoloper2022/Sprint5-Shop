@@ -1,6 +1,6 @@
 package org.example.intershop.controller;
 
-import org.example.intershop.DTO.OrderDto;
+
 import org.example.intershop.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 
 @Controller
 @RequestMapping("/cart")
@@ -28,7 +27,7 @@ public class PaymentController {
                     model.addAttribute("items", dto.getItems());
                     model.addAttribute("total", total);
 
-                    return "cart"; // имя шаблона
+                    return "cart";
                 });
     }
 

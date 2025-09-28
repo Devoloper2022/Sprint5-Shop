@@ -14,11 +14,6 @@ public class MainDTO {
     private Integer totalSize;
 
 
-    public MainDTO(Integer pageSize, Integer pageNumber) {
-        this.pageNumber = pageNumber;
-        this.pageSize = pageSize;
-    }
-
     public Boolean hasNext() {
         return (pageNumber - 1) * pageSize < totalSize;
     }
@@ -28,11 +23,4 @@ public class MainDTO {
     }
 
 
-    public Pageable getPageable(SortType sort) {
-        return switch (sort) {
-            case NO -> PageRequest.of(pageNumber, pageSize);
-            case ALPHA -> PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.ASC, "title"));
-            case PRICE -> PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.ASC, "price"));
-        };
-    }
 }

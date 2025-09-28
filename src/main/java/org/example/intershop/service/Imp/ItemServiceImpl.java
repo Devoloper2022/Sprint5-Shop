@@ -3,7 +3,7 @@ package org.example.intershop.service.Imp;
 
 import lombok.RequiredArgsConstructor;
 import org.example.intershop.DTO.ItemDto;
-import org.example.intershop.DTO.MainDTO;
+
 import org.example.intershop.DTO.SortType;
 import org.example.intershop.models.entity.Position;
 import org.example.intershop.models.mapper.ItemMapper;
@@ -12,9 +12,7 @@ import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.ItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -66,13 +64,14 @@ public class ItemServiceImpl implements ItemService {
                 .flatMap(exists -> {
                     if (exists) {
                         return Mono.just("position found");
-                    } else {
+                    }
+                    else {
                         return Mono.just("position missing");
                     }
                 });
 
 
-                    return repo.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(search, search, sort.getSort(sort))
+        return repo.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(search, search, sort.getSort(sort))
                 .flatMap(item ->
                         positionRepo.findByItemIdAndStatusFalse(item.getId())
                                 .map(position -> new ItemDto(
@@ -85,7 +84,7 @@ public class ItemServiceImpl implements ItemService {
                                         position.getId()
 
                                 ))
-                                .defaultIfEmpty(new ItemDto( // fallback if no position
+                                .defaultIfEmpty(new ItemDto(
                                         item.getId(),
                                         item.getTitle(),
                                         item.getDescription(),

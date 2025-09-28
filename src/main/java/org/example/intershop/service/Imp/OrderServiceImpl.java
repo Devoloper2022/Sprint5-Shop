@@ -32,11 +32,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Mono<OrderHistoryDto> findOrders() {
-        return repo.findAllByStatusTrue() // Flux<OrderEntity>
+        return repo.findAllByStatusTrue()
                 .flatMap(order ->
-                        findOrderById(order.getId()) // Mono<OrderDto>
+                        findOrderById(order.getId())
                 )
-                .collectList() // Mono<List<OrderDto>>
+                .collectList()
                 .map(orderList -> {
                     OrderHistoryDto dto = new OrderHistoryDto();
                     dto.setList(orderList);
@@ -52,9 +52,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Mono<OrderDto> findOrderById(Long orderId) {
-        Flux<ItemDto> itemsFlux = positionRepo.findAllByOrderId(orderId) // Flux<Position>
+        Flux<ItemDto> itemsFlux = positionRepo.findAllByOrderId(orderId)
                 .flatMap(position ->
-                        itemService.getItemById(position.getItemId()) // Mono<ItemDto>
+                        itemService.getItemById(position.getItemId())
                                 .map(itemDto -> {
                                     itemDto.setCount(position.getQuantity());
                                     itemDto.setPositionID(position.getId());
@@ -63,7 +63,7 @@ public class OrderServiceImpl implements OrderService {
                 );
 
         return itemsFlux
-                .collectList() // Собираем в список только на финальном шаге
+                .collectList()
                 .map(itemDtos -> {
                     OrderDto dto = new OrderDto();
                     dto.setId(orderId);
@@ -92,7 +92,8 @@ public class OrderServiceImpl implements OrderService {
                         OrderEntity newOrder = new OrderEntity();
                         newOrder.setStatus(false);
                         orderMono = repo.save(newOrder);
-                    } else {
+                    }
+                    else {
                         orderMono = repo.findById(orderId);
                     }
 
@@ -106,7 +107,8 @@ public class OrderServiceImpl implements OrderService {
                                             newPosition.setOrderId(orderEntity.getId());
                                             newPosition.setQuantity(1);
                                             positionMono = positionRepo.save(newPosition);
-                                        } else {
+                                        }
+                                        else {
                                             positionMono = positionRepo.findByItemIdAndStatusFalse(itemId)
                                                     .flatMap(existing -> {
                                                         existing.setQuantity(existing.getQuantity());
@@ -118,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
                                     })
                     );
                 })
-                .then(); // завершаем Mono<Void>
+                .then();
     }
 
     @Override
@@ -135,7 +137,8 @@ public class OrderServiceImpl implements OrderService {
                         newPosition.setItemId(itemId);
                         newPosition.setQuantity(1); // сразу ставим 1
                         return positionRepo.save(newPosition).then();
-                    } else {
+                    }
+                    else {
                         return positionRepo.findByItemIdAndStatusFalse(itemId)
                                 .flatMap(existing -> {
                                     existing.setQuantity(existing.getQuantity() + 1);
@@ -152,14 +155,12 @@ public class OrderServiceImpl implements OrderService {
                     if (position.getQuantity() > 1) {
                         position.setQuantity(position.getQuantity() - 1);
                         return positionRepo.save(position).then();
-                    } else {
-                        // если количество станет 0 или уже 1 → удаляем позицию
+                    }
+                    else {
+
                         return positionRepo.deleteById(position.getId());
                     }
                 })
-                .then(); // если позиции нет, просто завершаем пустым Mono
+                .then();
     }
-
-
-
 }

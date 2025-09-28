@@ -47,17 +47,17 @@ public class CartServiceImpl implements CartService {
 
 
     @Override
-    public Mono<OrderDto>  getBin() {
-        return positionRepo.findAllByStatusFalse() // Flux<Position>
+    public Mono<OrderDto> getBin() {
+        return positionRepo.findAllByStatusFalse()
                 .flatMap(position ->
-                        itemService.getItemById(position.getItemId()) // Mono<ItemDto>
+                        itemService.getItemById(position.getItemId())
                                 .map(itemDto -> {
                                     itemDto.setCount(position.getQuantity());
                                     itemDto.setPositionID(position.getId());
                                     return itemDto;
                                 })
                 )
-                .collectList() // Mono<List<ItemDto>>
+                .collectList()
                 .map(itemDtos -> {
                     OrderDto dto = new OrderDto();
                     dto.setItems(itemDtos);

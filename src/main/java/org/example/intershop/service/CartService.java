@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 public interface CartService {
     Mono<Long> pay();
 
-    Mono<OrderDto>  getBin();
+    Mono<OrderDto> getBin();
 }

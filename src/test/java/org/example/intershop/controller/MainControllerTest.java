@@ -1,65 +1,66 @@
-//package org.example.intershop.controller;
-//
-//import org.example.intershop.DTO.ItemDto;
-//import org.example.intershop.repository.ItemRepo;
-//import org.example.intershop.repository.OrderRepo;
-//import org.example.intershop.repository.PositionRepo;
-//import org.example.intershop.service.ItemService;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.Mockito;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-//import org.springframework.data.domain.Page;
-//import org.springframework.data.domain.PageImpl;
-//import org.springframework.test.context.bean.override.mockito.MockitoBean;
-//import org.springframework.test.web.servlet.MockMvc;
-//
-//import java.util.List;
-//
-//import static org.mockito.ArgumentMatchers.*;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-//
-//@WebMvcTest(MainController.class)
-//public class MainControllerTest {
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @MockitoBean
-//    private ItemService itemService;
-//
-//    @MockitoBean
-//    PositionRepo positionRepo;
-//    @MockitoBean
-//    OrderRepo orderRepo;
-//    @MockitoBean
-//    ItemRepo itemRepo;
-//
-//    @Test
-//    void getMainPage_shouldReturnMainViewWithModelAttributes() throws Exception {
-//
-//        ItemDto dto = new ItemDto();
-//        dto.setId(1L);
-//        dto.setTitle("Pizza");
-//        dto.setPrice(100L);
-//
-//        Page<ItemDto> page = new PageImpl<>(List.of(dto));
-//
-//        Mockito.when(itemService.findAllItemsPagingAndSorting(
-//                any(), any(), anyInt(), anyInt()
-//        )).thenReturn(page);
-//
-//        mockMvc.perform(get("/")
-//                        .param("search", "pizza")
-//                        .param("sort", "NO")
-//                        .param("pageSize", "10")
-//                        .param("pageNumber", "1"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("main"))
-//                .andExpect(model().attributeExists("items"))
-//                .andExpect(model().attributeExists("search"))
-//                .andExpect(model().attributeExists("sort"))
-//                .andExpect(model().attributeExists("paging"))
-//                .andExpect(model().attribute("items", List.of(dto)));
-//    }
-//}
+package org.example.intershop.controller;
+
+import org.example.intershop.DTO.ItemDto;
+import org.example.intershop.DTO.SortType;
+import org.example.intershop.repository.ItemRepo;
+import org.example.intershop.repository.OrderRepo;
+import org.example.intershop.repository.PositionRepo;
+import org.example.intershop.service.ItemService;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.reactive.server.WebTestClient;
+
+import reactor.core.publisher.Flux;
+
+
+@WebFluxTest(MainController.class)
+public class MainControllerTest {
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @MockitoBean
+    private ItemService itemService;
+
+    @MockitoBean
+    PositionRepo positionRepo;
+    @MockitoBean
+    OrderRepo orderRepo;
+    @MockitoBean
+    ItemRepo itemRepo;
+
+    @Test
+    void testShowItems() {
+        ItemDto item1 = new ItemDto();
+        item1.setId(1L);
+        item1.setTitle("Item 1");
+
+        ItemDto item2 = new ItemDto();
+        item2.setId(2L);
+        item2.setTitle("Item 2");
+
+        Mockito.when(itemService.findAllItemsPagingAndSorting(
+                Mockito.anyString(),
+                Mockito.any(SortType.class),
+                Mockito.anyInt(),
+                Mockito.anyInt()
+        )).thenReturn(Flux.just(item1, item2));
+
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/")
+                        .queryParam("search", "test")
+                        .queryParam("sort", "NO")
+                        .queryParam("pageNumber", 1)
+                        .queryParam("pageSize", 10)
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    String html = response.getResponseBody();
+                    System.out.println(html);
+                });
+    }
+}
