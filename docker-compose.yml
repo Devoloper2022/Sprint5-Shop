@@ -10,3 +10,20 @@ services:
     depends_on:
       - intershop-db
     restart: on-failure
+    environment:
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mydb
+        - SPRING_DATASOURCE_URL=r2dbc:postgresql://localhost:5432/mydb
+        - SPRING_DATASOURCE_USER=intershop
+        - SPRING_DATASOURCE_PASSWORD=intershop
+
+  intershop-db:
+      image: postgres:16-alpine
+      container_name: intershop-db-container
+      volumes:
+        - /var/lib/postgresql/data/
+      ports:
+        - 6541:5432
+      environment:
+        - POSTGRES_DB=mydb
+        - POSTGRES_USER=intershop
+        - POSTGRES_PASSWORD=intershop

@@ -39,18 +39,28 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'org.mockito:mockito-core:5.12.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation "org.testcontainers:r2dbc"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+
+
+test {
+    useJUnitPlatform()
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-
-tasks.withType(Test) {
-    enabled = false
-}
 

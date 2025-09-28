@@ -109,7 +109,7 @@ public class OrderServiceImpl implements OrderService {
                                         } else {
                                             positionMono = positionRepo.findByItemIdAndStatusFalse(itemId)
                                                     .flatMap(existing -> {
-                                                        existing.setQuantity(existing.getQuantity() + 1);
+                                                        existing.setQuantity(existing.getQuantity());
                                                         existing.setOrderId(orderEntity.getId());
                                                         return positionRepo.save(existing);
                                                     });

@@ -1,6 +1,8 @@
 package org.example.intershop.controller;
 
 
+import lombok.Data;
+import org.example.intershop.DTO.ActionForm;
 import org.example.intershop.DTO.ActionType;
 import org.example.intershop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +39,14 @@ public class OrderController {
     @PostMapping("/action/{id}")
     public Mono<String> countItem(
             @PathVariable("id") Long itemId,
-            @RequestParam String action
+            @ModelAttribute ActionForm action
     ) {
+        System.out.println(">>> Controller hit! itemId=" + itemId + ", action=" + action);
         Mono<Void> actionMono;
 
-        if (ActionType.PLUS.getName().equals(action)) {
+        if (ActionType.PLUS.getName().equals(action.getAction())) {
             actionMono = orderService.incrementPosition(itemId);
-        } else if (ActionType.MINUS.getName().equals(action)) {
+        } else if (ActionType.MINUS.getName().equals(action.getAction())) {
             actionMono = orderService.decrementPosition(itemId);
         } else {
             actionMono = Mono.empty();
@@ -56,13 +59,13 @@ public class OrderController {
     @PostMapping("/cart/{id}")
     public Mono<String> addToCart(
             @PathVariable("id") Long id,
-            @RequestParam String action
+            @ModelAttribute ActionForm action
     ) {
         Mono<Void> actionMono;
 
-        if (ActionType.PLUS.getName().equals(action)) {
+        if (ActionType.PLUS.getName().equals(action.getAction())) {
             actionMono = orderService.addPosition(1L, id);
-        } else if (ActionType.MINUS.getName().equals(action)) {
+        } else if (ActionType.MINUS.getName().equals(action.getAction())) {
             actionMono = orderService.removePosition(id);
         } else {
             actionMono = Mono.empty();
