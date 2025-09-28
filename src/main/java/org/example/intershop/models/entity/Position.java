@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table(name = "positions")
@@ -18,5 +19,6 @@ public class Position {
     private Long orderId;
     private Long itemId;
     private Integer quantity;
+    @Column("status")
     private boolean status;
 }

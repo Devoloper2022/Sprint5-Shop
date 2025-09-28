@@ -1,10 +1,10 @@
 package org.example.intershop.models.entity;
 
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
-import lombok.Data;
 
 @Data
 @Table(name = "orders")

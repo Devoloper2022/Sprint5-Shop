@@ -4,13 +4,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.ResourceHandlerRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 
 @Configuration
-@EnableWebFlux
 @ComponentScan(basePackages = "org.example.intershop")
 @PropertySource("classpath:application.properties")
 public class WebConfig implements WebFluxConfigurer {
@@ -22,5 +20,4 @@ public class WebConfig implements WebFluxConfigurer {
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:" + storePath+"/");
     }
-
 }

@@ -57,33 +57,45 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Flux<ItemDto> findAllItemsPagingAndSorting(String search, SortType sort, Integer pageSize, Integer pageNumber) {
-        int offset = Math.max(0, (pageNumber - 1) * pageSize);
-
-        Pageable pageable = PageRequest.of( pageNumber, pageSize, new MainDTO(pageSize,pageNumber).getPageable(sort).getSort());
-
-        return repo
-                .findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        search == null ? "" : search,
-                        search == null ? "" : search,
-                        pageable
-                ).map(itemMapper::toItemDto);
+        if (search == null || search.isEmpty()) {
+            search = "";
+        }
 
 
-//        return repo.searchAll(search, sort.fromValue(sort), pageSize, offset).map(itemMapper::toItemDto);
-//        return repo.searchAll(search, pageSize, offset, sort.fromValue(sort))
-//                .flatMap(item ->
-//                        positionRepo.findByItemIdAndStatusFalse(item.getId()) // Mono<Position>
-//                                .defaultIfEmpty(new Position()) // если позиции нет
-//                                .map(position -> new ItemDto(
-//                                        item.getId(),
-//                                        item.getTitle(),
-//                                        item.getDescription(),
-//                                        item.getImgname(),
-//                                        position.getId() != null ? position.getQuantity() : 0,
-//                                        item.getPrice(),
-//                                        position.getId() != null ? position.getId() : 0L
-//                                ))
-//                );
+        positionRepo.existsByItemIdAndStatusFalse(0L)
+                .flatMap(exists -> {
+                    if (exists) {
+                        return Mono.just("position found");
+                    } else {
+                        return Mono.just("position missing");
+                    }
+                });
+
+
+                    return repo.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(search, search, sort.getSort(sort))
+                .flatMap(item ->
+                        positionRepo.findByItemIdAndStatusFalse(item.getId())
+                                .map(position -> new ItemDto(
+                                        item.getId(),
+                                        item.getTitle(),
+                                        item.getDescription(),
+                                        item.getImgname(),
+                                        position.getQuantity(),
+                                        item.getPrice(),
+                                        position.getId()
+
+                                ))
+                                .defaultIfEmpty(new ItemDto( // fallback if no position
+                                        item.getId(),
+                                        item.getTitle(),
+                                        item.getDescription(),
+                                        item.getImgname(),
+                                        0,
+                                        item.getPrice(),
+                                        0L
+                                ))
+                );
+
     }
 
     @Override

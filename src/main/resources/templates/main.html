@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+    <meta charset="UTF-8">
     <title>Витрина товаров</title>
 </head>
 
@@ -53,8 +54,8 @@
             </form>
         </td>
     </tr>
-    <tr th:each="itemsRow : ${items}">
-        <td th:each="item : ${itemsRow}">
+<!--    <tr th:each="itemsRow : ${items}">-->
+        <td th:each="item : ${items}">
             <table>
                 <tr>
                     <td>
@@ -90,7 +91,7 @@
                 </tr>
             </table>
         </td>
-    </tr>
+<!--    </tr>-->
 </table>
 </body>
 
