@@ -13,6 +13,7 @@ import org.example.intershop.service.ItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,6 +32,7 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
+    @Cacheable(value = "items", key = "#itemId", unless = "#result == null")
     public Mono<ItemDto> getItemById(Long id) {
         return repo.findById(id)
                 .switchIfEmpty(Mono.error(new RuntimeException("Item not found")))
@@ -52,8 +54,8 @@ public class ItemServiceImpl implements ItemService {
                 );
     }
 
-
     @Override
+    @Cacheable(value = "allItems", key = "#search + '-' + #pageNumber + '-' + #pageSize + '-' + #itemSort.name()")
     public Flux<ItemDto> findAllItemsPagingAndSorting(String search, SortType sort, Integer pageSize, Integer pageNumber) {
         if (search == null || search.isEmpty()) {
             search = "";

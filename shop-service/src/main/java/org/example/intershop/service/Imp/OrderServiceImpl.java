@@ -12,7 +12,10 @@ import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.ItemService;
 import org.example.intershop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 
+
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
+    @Cacheable(value = "allOrders")
     public Mono<OrderHistoryDto> findOrders() {
         return repo.findAllByStatusTrue()
                 .flatMap(order ->
@@ -51,6 +55,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Cacheable(value = "orders", key = "#orderId", unless = "#result == null")
     public Mono<OrderDto> findOrderById(Long orderId) {
         Flux<ItemDto> itemsFlux = positionRepo.findAllByOrderId(orderId)
                 .flatMap(position ->
@@ -84,6 +89,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @CacheEvict(value = {"orders", "allOrders"}, allEntries = true)
     public Mono<Void> addPosition(Long orderId, Long itemId) {
         return repo.existsByIdAndStatusFalse(orderId)
                 .flatMap(exists -> {
@@ -124,6 +130,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @CacheEvict(value = {"orders", "allOrders"}, key = "#orderId")
     public Mono<Void> removePosition(Long positionId) {
         return positionRepo.deleteById(positionId);
     }
