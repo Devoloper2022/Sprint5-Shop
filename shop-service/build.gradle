@@ -1,7 +1,11 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.gorylenko.gradle-git-properties' version '2.4.2'
+    id 'org.openapi.generator' version '7.12.0'
 }
 
 group = 'org.example'
@@ -56,6 +60,27 @@ dependencies {
     testImplementation 'org.testcontainers:postgresql'
     testImplementation "org.testcontainers:r2dbc"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+
+tasks.register('buildClient', GenerateTask) {
+    generatorName.set("java")
+    inputSpec.set("$projectDir/../payment-service/src/main/resources/api-spec.yaml")
+    outputDir.set(project.layout.buildDirectory.dir('generated-sources/openapi-client').get().asFile.absolutePath)
+    skipValidateSpec.set(false)
+    packageName.set('org.example.intershop.client')
+    modelPackage.set('org.example.intershop.client.model')
+    apiPackage.set('org.example.intershop.client.api')
+    invokerPackage.set('org.example.intershop.client')
+    configOptions.set([
+            library        : 'webclient',
+            reactive       : 'true',
+            useJakartaEe   : 'true',
+            java8          : 'true',
+            useTags        : 'true',
+            sourceFolder   : 'src/main/java',
+            openApiNullable: 'false'
+    ])
 }
 
 

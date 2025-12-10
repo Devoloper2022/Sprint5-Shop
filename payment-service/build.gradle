@@ -1,7 +1,10 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.openapi.generator' version '7.12.0'
 }
 
 group = 'org.example'
@@ -47,6 +50,40 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+openApiGenerate {
+    generatorName.set("spring")
+    inputSpec.set("$projectDir/src/main/resources/api-spec.yaml")
+    outputDir.set(project.layout.buildDirectory.dir('generated-sources/openapi-server').get().asFile.absolutePath)
+    skipValidateSpec.set(false)
+    packageName.set('org.example.payment.service')
+    modelPackage.set("org.example.payment.service.model")
+    invokerPackage.set("org.example.payment.service")
+    apiPackage.set("org.example.payment.service.api")
+    configOptions.set([
+            library        : "spring-boot",
+            reactive       : "true",
+            useSpringBoot3 : "true",
+            java8          : 'true',
+            useTags        : "true",
+            sourceFolder   : "src/main/java",
+            openApiNullable: "false",
+            interfaceOnly  : "true"
+    ])
+}
+
+
+sourceSets {
+    main {
+        java {
+            srcDirs += file("$buildDir/generated-sources/openapi-server/src/main/java")
+        }
+    }
+    test {
+        java {
+            srcDirs += file("$buildDir/generated-sources/openapi-server/src/test/java")
+        }
+    }
+}
 
 
 test {
