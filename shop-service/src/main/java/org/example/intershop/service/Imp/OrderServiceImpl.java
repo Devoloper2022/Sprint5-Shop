@@ -89,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @CacheEvict(value = {"orders", "allOrders"}, allEntries = true)
+//    @CacheEvict(value = {"orders", "allOrders"}, allEntries = true)
     public Mono<Void> addPosition(Long orderId, Long itemId) {
         return repo.existsByIdAndStatusFalse(orderId)
                 .flatMap(exists -> {
@@ -130,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @CacheEvict(value = {"orders", "allOrders"}, key = "#orderId")
+//    @CacheEvict(value = {"orders", "allOrders"}, key = "#orderId")
     public Mono<Void> removePosition(Long positionId) {
         return positionRepo.deleteById(positionId);
     }
