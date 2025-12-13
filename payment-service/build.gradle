@@ -1,0 +1,97 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.openapi.generator' version '7.12.0'
+}
+
+group = 'org.example'
+version = '0.0.1-SNAPSHOT'
+description = 'payment-service'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    compileOnly 'org.projectlombok:lombok'
+
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'org.mockito:mockito-core:5.12.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+openApiGenerate {
+    generatorName.set("spring")
+    inputSpec.set("$projectDir/src/main/resources/api-spec.yaml")
+    outputDir.set(project.layout.buildDirectory.dir('generated-sources/openapi-server').get().asFile.absolutePath)
+    skipValidateSpec.set(false)
+    packageName.set('org.example.payment.service')
+    modelPackage.set("org.example.payment.service.model")
+    invokerPackage.set("org.example.payment.service")
+    apiPackage.set("org.example.payment.service.api")
+    configOptions.set([
+            library        : "spring-boot",
+            reactive       : "true",
+            useSpringBoot3 : "true",
+            java8          : 'true',
+            useTags        : "true",
+            sourceFolder   : "src/main/java",
+            openApiNullable: "false",
+            interfaceOnly  : "true"
+    ])
+}
+
+
+sourceSets {
+    main {
+        java {
+            srcDirs += file("$buildDir/generated-sources/openapi-server/src/main/java")
+        }
+    }
+    test {
+        java {
+            srcDirs += file("$buildDir/generated-sources/openapi-server/src/test/java")
+        }
+    }
+}
+
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+

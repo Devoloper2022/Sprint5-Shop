@@ -56,9 +56,12 @@
     </tr>
     <tr>
         <td style="text-align:right">
-            <form action="/cart/pay" method="post" th:if="${items != null and !items.isEmpty()}">
+            <form action="/cart/pay" method="post" th:if="${items != null and !items.isEmpty() and ${balance>=total}}">
                 <button>Купить</button>
             </form>
+
+            <b th:if="${balance<0}">Сервис платежей недоступен</b>
+            <b th:if="${balance>=0} and ${balance<total}">Недостаточно средств на счёте</b>
         </td>
     </tr>
 </table>
