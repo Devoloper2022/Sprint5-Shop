@@ -61,7 +61,9 @@ dependencies {
     testImplementation "org.testcontainers:r2dbc"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-
+//
+//compileJava.dependsOn buildClient
+//compileTestJava.dependsOn buildClient
 
 tasks.register('buildClient', GenerateTask) {
     generatorName.set("java")
@@ -81,6 +83,11 @@ tasks.register('buildClient', GenerateTask) {
             sourceFolder   : 'src/main/java',
             openApiNullable: 'false'
     ])
+}
+
+
+tasks.named("openApiGenerate") {
+    enabled = false
 }
 
 sourceSets {

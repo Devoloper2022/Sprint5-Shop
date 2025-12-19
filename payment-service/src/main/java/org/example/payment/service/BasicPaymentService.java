@@ -1,7 +1,8 @@
 package org.example.payment.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
+
 import org.example.payment.service.model.BalanceResponse;
 import org.example.payment.service.model.PaymentRequest;
 import org.springframework.stereotype.Service;
