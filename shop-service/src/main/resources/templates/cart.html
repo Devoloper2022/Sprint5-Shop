@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="UTF-8">
@@ -9,6 +9,10 @@
 <body>
 <a href="/orders" style="float:right;">
     <b>ЗАКАЗЫ &cudarrr;</b>
+</a>
+<b sec:authentication="name" sec:authorize="isAuthenticated()"></b>
+<a href="/logout" style="float:right;" sec:authorize="isAuthenticated()">
+    <b>Выйти &#10549;</b>
 </a>
 <a href="/" style="float:right;">
     <b>ГЛАВНАЯ &cudarrr;</b>
