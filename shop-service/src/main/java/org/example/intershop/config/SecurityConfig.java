@@ -1,5 +1,7 @@
 package org.example.intershop.config;
 
+import org.example.intershop.service.UserDetailsServiceImpl;
+import org.example.intershop.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

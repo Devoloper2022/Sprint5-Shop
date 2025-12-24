@@ -4,7 +4,7 @@ import org.example.intershop.DTO.OrderDto;
 import org.example.intershop.client.api.PaymentApi;
 import org.example.intershop.client.model.BalanceResponse;
 import org.example.intershop.client.model.PaymentRequest;
-import org.example.intershop.models.entity.OrderEntity;
+import org.example.intershop.models.entity.Order;
 
 import org.example.intershop.repository.ItemRepo;
 import org.example.intershop.repository.OrderRepo;
@@ -81,7 +81,7 @@ public class CartServiceImpl implements CartService {
                                                 .thenReturn(totalSum)
                                 )
                                 .flatMap(sum -> {
-                                    OrderEntity newEntity = new OrderEntity();
+                                    Order newEntity = new Order();
                                     newEntity.setStatus(true);
 
                                     return orderRepo.save(newEntity)

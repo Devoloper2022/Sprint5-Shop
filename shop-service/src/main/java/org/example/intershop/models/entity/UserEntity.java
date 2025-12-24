@@ -11,7 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @AllArgsConstructor
 @Table("users")
 @EqualsAndHashCode(of = "id")
-public class User {
+public class UserEntity {
     @Id
     private Long id;
 

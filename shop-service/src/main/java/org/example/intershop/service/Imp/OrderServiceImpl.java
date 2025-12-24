@@ -4,7 +4,7 @@ import org.example.intershop.DTO.ItemDto;
 import org.example.intershop.DTO.OrderDto;
 import org.example.intershop.DTO.OrderHistoryDto;
 
-import org.example.intershop.models.entity.OrderEntity;
+import org.example.intershop.models.entity.Order;
 import org.example.intershop.models.entity.Position;
 
 import org.example.intershop.repository.OrderRepo;
@@ -12,7 +12,6 @@ import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.ItemService;
 import org.example.intershop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 
 
 import org.springframework.cache.annotation.Cacheable;
@@ -93,9 +92,9 @@ public class OrderServiceImpl implements OrderService {
     public Mono<Void> addPosition(Long orderId, Long itemId) {
         return repo.existsByIdAndStatusFalse(orderId)
                 .flatMap(exists -> {
-                    Mono<OrderEntity> orderMono;
+                    Mono<Order> orderMono;
                     if (!exists) {
-                        OrderEntity newOrder = new OrderEntity();
+                        Order newOrder = new Order();
                         newOrder.setStatus(false);
                         orderMono = repo.save(newOrder);
                     }

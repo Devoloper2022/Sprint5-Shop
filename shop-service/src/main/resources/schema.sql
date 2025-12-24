@@ -16,6 +16,12 @@ create table if not exists  positions
     quantity integer not null default 0,
     status boolean default false
 );
+CREATE TABLE users
+(
+    id       BIGSERIAL NOT NULL,
+    username VARCHAR(255),
+    password VARCHAR(255)
+);
 
 create table if not exists orders
 (
@@ -23,7 +29,8 @@ create table if not exists orders
     status boolean not null,
     total_position integer not null,
     total_price integer not null,
-    total_quantity integer not null
+    total_quantity integer not null,
+    user_id BIGSERIAL NOT NULL
 );
 
 insert into orders(status,total_position,total_price,total_quantity)

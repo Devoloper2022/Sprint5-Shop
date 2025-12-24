@@ -1,7 +1,7 @@
 package org.example.intershop.models.mapper;
 
 import org.example.intershop.DTO.OrderDto;
-import org.example.intershop.models.entity.OrderEntity;
+import org.example.intershop.models.entity.Order;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -12,5 +12,5 @@ public interface OrderMapper {
     @Mapping(source = "totalPrice", target = "totalSum")
     @Mapping(source = "totalQuantity", target = "quantity")
     @Mapping(target = "items", ignore = true)
-    OrderDto toOrderDto(OrderEntity order);
+    OrderDto toOrderDto(Order order);
 }
