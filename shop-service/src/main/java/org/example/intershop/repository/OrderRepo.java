@@ -14,7 +14,11 @@ public interface OrderRepo extends R2dbcRepository<Order, Long> {
 
     Mono<Order> findByIdAndStatusFalse(Long orderId);
 
+    Mono<Order> findByUserIdAndStatusFalse(Long userId);
+
     Mono<Boolean> existsByIdAndStatusFalse(Long orderId);
+
+    Mono<Boolean> existsByUserIdAndStatusFalse(Long userId);
 
     Flux<Order> findAllByStatusTrue();
 

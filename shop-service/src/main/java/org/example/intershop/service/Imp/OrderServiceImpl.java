@@ -11,6 +11,7 @@ import org.example.intershop.repository.OrderRepo;
 import org.example.intershop.repository.PositionRepo;
 import org.example.intershop.service.ItemService;
 import org.example.intershop.service.OrderService;
+import org.example.intershop.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -25,11 +26,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private PositionRepo positionRepo;
+
     @Autowired
     private OrderRepo repo;
 
     @Autowired
     private ItemService itemService;
+
+    @Autowired
+    private SecurityService securityService;
 
 
     @Override
@@ -88,46 +93,49 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-//    @CacheEvict(value = {"orders", "allOrders"}, allEntries = true)
-    public Mono<Void> addPosition(Long orderId, Long itemId) {
-        return repo.existsByIdAndStatusFalse(orderId)
-                .flatMap(exists -> {
-                    Mono<Order> orderMono;
-                    if (!exists) {
-                        Order newOrder = new Order();
-                        newOrder.setStatus(false);
-                        orderMono = repo.save(newOrder);
-                    }
-                    else {
-                        orderMono = repo.findById(orderId);
-                    }
+    public Mono<Void> addPosition(Long itemId) {
 
-                    return orderMono.flatMap(orderEntity ->
-                            positionRepo.existsByItemIdAndStatusFalse(itemId)
-                                    .flatMap(positionExists -> {
-                                        Mono<Position> positionMono;
-                                        if (!positionExists) {
-                                            Position newPosition = new Position();
-                                            newPosition.setItemId(itemId);
-                                            newPosition.setOrderId(orderEntity.getId());
-                                            newPosition.setQuantity(1);
-                                            positionMono = positionRepo.save(newPosition);
-                                        }
-                                        else {
-                                            positionMono = positionRepo.findByItemIdAndStatusFalse(itemId)
-                                                    .flatMap(existing -> {
-                                                        existing.setQuantity(existing.getQuantity());
-                                                        existing.setOrderId(orderEntity.getId());
-                                                        return positionRepo.save(existing);
-                                                    });
-                                        }
-                                        return positionMono.then();
-                                    })
-                    );
-                })
-                .then();
+        return securityService.getCurrentUserId()
+                .flatMap(userId ->
+                        repo.existsByUserIdAndStatusFalse(userId)
+                                .flatMap(exists -> {
+
+                                    Mono<Order> orderMono;
+
+                                    if (!exists) {
+                                        Order newOrder = new Order();
+                                        newOrder.setUserId(userId);
+                                        newOrder.setStatus(false);
+                                        orderMono = repo.save(newOrder);
+                                    } else {
+                                        orderMono = repo.findByUserIdAndStatusFalse(userId);
+                                    }
+
+                                    return orderMono.flatMap(order ->
+                                            positionRepo.findByItemIdAndStatusFalseAndOrderId(
+                                                            order.getId(), itemId
+                                                    )
+                                                    .flatMap(position -> {
+                                                        // position exists → increment
+                                                        position.setQuantity(position.getQuantity() + 1);
+                                                        return positionRepo.save(position);
+                                                    })
+                                                    .switchIfEmpty(
+                                                            // position does not exist → create
+                                                            positionRepo.save(
+                                                                    Position.builder()
+                                                                            .orderId(order.getId())
+                                                                            .itemId(itemId)
+                                                                            .quantity(1)
+                                                                            .status(false)
+                                                                            .build()
+                                                            )
+                                                    )
+                                                    .then()
+                                    );
+                                })
+                );
     }
-
     @Override
 //    @CacheEvict(value = {"orders", "allOrders"}, key = "#orderId")
     public Mono<Void> removePosition(Long positionId) {

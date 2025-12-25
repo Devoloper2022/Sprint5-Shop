@@ -12,7 +12,7 @@ public interface OrderService {
 
     Mono<OrderDto> findOrderById(Long orderId);
 
-    Mono<Void> addPosition(Long orderId, Long itemId);
+    Mono<Void> addPosition( Long itemId);
 
     Mono<Void> removePosition(Long positionId);
 

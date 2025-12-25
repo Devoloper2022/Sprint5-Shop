@@ -15,8 +15,11 @@ public interface PositionRepo extends R2dbcRepository<Position, Long> {
 
     Mono<Position> findByItemIdAndStatusFalse(Long itemId);
 
-
     Mono<Boolean> existsByItemIdAndStatusFalse(Long itemId);
+
+    Mono<Position> findByItemIdAndStatusFalseAndOrderId(Long itemId, Long orderId);
+
+    Mono<Boolean> existsByItemIdAndStatusFalseAndOrderId(Long itemId, Long orderId);
 
     Flux<Position> findAllByStatusFalse();
 }

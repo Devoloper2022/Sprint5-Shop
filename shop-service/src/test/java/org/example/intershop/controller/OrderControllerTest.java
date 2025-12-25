@@ -74,7 +74,7 @@ public class OrderControllerTest {
 
     @Test
     void testAddToCartPlus() {
-        Mockito.when(orderService.addPosition(1L, 2L))
+        Mockito.when(orderService.addPosition( 2L))
                 .thenReturn(Mono.empty());
 
         webTestClient.post()
