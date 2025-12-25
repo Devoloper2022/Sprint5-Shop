@@ -62,7 +62,7 @@ public class OrderController {
         Mono<Void> actionMono;
 
         if (ActionType.PLUS.getName().equals(action.getAction())) {
-            actionMono = orderService.addPosition(1L, id);
+            actionMono = orderService.addPosition( id);
         } else if (ActionType.MINUS.getName().equals(action.getAction())) {
             actionMono = orderService.removePosition(id);
         } else {

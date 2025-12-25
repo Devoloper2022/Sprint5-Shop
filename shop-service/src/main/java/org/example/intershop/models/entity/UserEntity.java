@@ -2,21 +2,20 @@ package org.example.intershop.models.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(name = "positions")
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table("users")
 @EqualsAndHashCode(of = "id")
-@Builder
-public class Position {
+public class UserEntity {
     @Id
     private Long id;
-    private Long orderId;
-    private Long itemId;
-    private Integer quantity;
-    @Column("status")
-    private boolean status;
+
+    private String username;
+
+    private String password;
 }

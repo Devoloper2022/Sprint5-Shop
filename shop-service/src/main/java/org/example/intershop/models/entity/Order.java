@@ -9,12 +9,13 @@ import org.springframework.data.relational.core.mapping.Table;
 @Data
 @Table(name = "orders")
 @EqualsAndHashCode(of = "id")
-public class OrderEntity {
+public class Order {
     @Id
     private Long id;
     private int totalPrice;
     private int totalQuantity;
     private int totalPosition;
     private boolean status;
+    private Long userId;
 }
 

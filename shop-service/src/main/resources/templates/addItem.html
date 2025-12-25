@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
 
 <head>
     <meta charset="UTF-8">
@@ -9,6 +10,15 @@
 <body>
 <a href="/main/items" style="float:right;">
     <b>НА ГЛАВНУЮ &cudarrr;</b>
+</a>
+<a href="/logout" style="float:right;" sec:authorize="isAuthenticated()">
+    <b>Выйти &#10549;</b>
+</a>
+<a href="/login" style="float:right;" th:if="!${#authentication}">
+    <b>Войти &#10549;</b>
+</a>
+<a href="/register" style="float:right;" th:if="!${#authentication}">
+    <b>Зарегистрироваться &#10549;</b>
 </a>
 <form method="POST" th:action="${item==null ? '/items' : '/items/'+item.getId() + '/edit'}"
       enctype="multipart/form-data">

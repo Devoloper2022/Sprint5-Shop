@@ -4,14 +4,12 @@ import org.example.intershop.DTO.OrderDto;
 import org.example.intershop.client.api.PaymentApi;
 import org.example.intershop.client.model.BalanceResponse;
 import org.example.intershop.client.model.PaymentRequest;
-import org.example.intershop.models.entity.OrderEntity;
+import org.example.intershop.models.entity.Order;
 
 import org.example.intershop.repository.ItemRepo;
 import org.example.intershop.repository.OrderRepo;
 import org.example.intershop.repository.PositionRepo;
-import org.example.intershop.service.CartService;
-import org.example.intershop.service.ItemService;
-import org.example.intershop.service.OrderService;
+import org.example.intershop.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -39,65 +37,59 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private PaymentApi paymentService;
 
+    @Autowired
+    private OAuth2Service oAuth2Service;
+
+    @Autowired
+    private PaymentApi paymentApi;
+    @Autowired
+    private SecurityService securityService;
+
 
     @Override
     public Mono<Long> pay() {
-//        return orderRepo.findByIdAndStatusFalse(1L)
-//                .switchIfEmpty(Mono.error(new IllegalStateException("Order not found")))
-//                .flatMap(oldOrder -> {
-//                    OrderEntity newEntity = new OrderEntity();
-//                    newEntity.setStatus(true);
-//
-//                    return orderRepo.save(newEntity)
-//                            .flatMap(savedOrder ->
-//                                    positionRepo.findAllByOrderId(oldOrder.getId())
-//                                            .flatMap(position -> {
-//                                                position.setOrderId(savedOrder.getId());
-//                                                position.setStatus(true);
-//                                                return positionRepo.save(position);
-//                                            })
-//                                            .then(Mono.just(savedOrder.getId()))
-//                            );
-//                });
+        return securityService.getCurrentUserId()
+                .flatMap(userId ->
+                        orderRepo.findByUserIdAndStatusFalse(userId)
+                                .switchIfEmpty(Mono.error(
+                                        new IllegalStateException("Order not found")
+                                ))
+                                .flatMap(order ->
+                                        getCartTotalSum(order.getId())
+                                                .flatMap(totalSum ->
+                                                        paymentService.getBalance()
+                                                                .map(BalanceResponse::getBalance)
+                                                                .flatMap(balance -> {
+                                                                    if (balance.compareTo(totalSum) < 0) {
+                                                                        return Mono.error(
+                                                                                new IllegalStateException("Not enough money")
+                                                                        );
+                                                                    }
+                                                                    return paymentService.makePayment(
+                                                                            new PaymentRequest().sum(totalSum)
+                                                                    );
+                                                                })
+                                                                .thenReturn(totalSum)
+                                                )
+                                                .flatMap(totalSum -> {
 
+                                                    // ✅ закрываем текущий заказ
+                                                    order.setStatus(true);
+                                                    order.setTotalPrice(totalSum.intValueExact());
+                                                    order.setUserId(userId);
 
-        return orderRepo.findByIdAndStatusFalse(1L)
-                .switchIfEmpty(Mono.error(new IllegalStateException("Order not found")))
-                .flatMap(oldOrder ->
-                        getCartTotalSum(1l)
-                                .flatMap(totalSum ->
-                                        paymentService.getBalance()
-                                                .map(BalanceResponse::getBalance)
-                                                .flatMap(balance -> {
-                                                    if (balance.compareTo(totalSum) < 0) {
-                                                        return Mono.error(
-                                                                new IllegalStateException("Not enough money")
-                                                        );
-                                                    }
-                                                    return paymentService.makePayment(
-                                                            new PaymentRequest().sum(totalSum)
-                                                    );
+                                                    return orderRepo.save(order)
+                                                            .flatMap(savedOrder ->
+                                                                    positionRepo.findAllByOrderId(savedOrder.getId())
+                                                                            .flatMap(position -> {
+                                                                                position.setStatus(true);
+                                                                                return positionRepo.save(position);
+                                                                            })
+                                                                            .then(Mono.just(savedOrder.getId()))
+                                                            );
                                                 })
-                                                .thenReturn(totalSum)
                                 )
-                                .flatMap(sum -> {
-                                    OrderEntity newEntity = new OrderEntity();
-                                    newEntity.setStatus(true);
-
-                                    return orderRepo.save(newEntity)
-                                            .flatMap(savedOrder ->
-                                                    positionRepo.findAllByOrderId(oldOrder.getId())
-                                                            .flatMap(position -> {
-                                                                position.setOrderId(savedOrder.getId());
-                                                                position.setStatus(true);
-                                                                return positionRepo.save(position);
-                                                            })
-                                                            .then(Mono.just(savedOrder.getId()))
-                                            );
-                                })
                 );
-
-
     }
 
 
@@ -117,6 +109,22 @@ public class CartServiceImpl implements CartService {
                     OrderDto dto = new OrderDto();
                     dto.setItems(itemDtos);
                     return dto;
+                });
+    }
+
+
+    @Override
+    public Mono<BigDecimal> getBalance() {
+        return oAuth2Service
+                .getTokenValue()
+                .flatMap(accessToken -> {
+                    paymentApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + accessToken);
+                    return paymentApi.getBalance();
+                })
+                .map(BalanceResponse::getBalance)
+                .onErrorResume(error -> {
+                    System.out.println("Ошибка при обращении в платежный сервис: {}" + error.getMessage() + error);
+                    return Mono.just(BigDecimal.ONE.negate());
                 });
     }
 

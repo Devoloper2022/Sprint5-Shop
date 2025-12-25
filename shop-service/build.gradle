@@ -34,7 +34,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     compileOnly 'org.projectlombok:lombok'
 //    runtimeOnly 'com.h2database:h2'
-//    runtimeOnly 'io.r2dbc:r2dbc-h2'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
 
@@ -43,6 +44,7 @@ dependencies {
     runtimeOnly "org.postgresql:postgresql"
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -61,7 +63,9 @@ dependencies {
     testImplementation "org.testcontainers:r2dbc"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-
+//
+//compileJava.dependsOn buildClient
+//compileTestJava.dependsOn buildClient
 
 tasks.register('buildClient', GenerateTask) {
     generatorName.set("java")
@@ -81,6 +85,11 @@ tasks.register('buildClient', GenerateTask) {
             sourceFolder   : 'src/main/java',
             openApiNullable: 'false'
     ])
+}
+
+
+tasks.named("openApiGenerate") {
+    enabled = false
 }
 
 sourceSets {

@@ -1,5 +1,6 @@
 package org.example.intershop.repo;
 
+import org.example.intershop.models.entity.Order;
 import org.example.intershop.models.entity.OrderEntity;
 import org.example.intershop.repository.OrderRepo;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +45,7 @@ public class OrderRepoTest {
 
     @Test
     void testFindByIdAndStatusFalse() {
-        OrderEntity order = new OrderEntity();
+        Order order = new Order();
         order.setStatus(false);
 
         StepVerifier.create(orderRepo.save(order)
@@ -55,7 +56,7 @@ public class OrderRepoTest {
 
     @Test
     void testExistsByIdAndStatusFalse() {
-        OrderEntity order = new OrderEntity();
+        Order order = new Order();
         order.setStatus(false);
 
         StepVerifier.create(orderRepo.save(order)
@@ -67,7 +68,7 @@ public class OrderRepoTest {
     @Test
     void testFindAllByStatusTrue() {
         StepVerifier.create(orderRepo.findAllByStatusTrue())
-                .expectNextMatches(OrderEntity::isStatus)
+                .expectNextMatches(Order::isStatus)
                 .verifyComplete();
     }
 

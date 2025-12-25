@@ -3,6 +3,7 @@ package org.example.payment.controller;
 import lombok.RequiredArgsConstructor;
 
 import org.example.payment.service.PaymentService;
+import org.example.payment.service.api.PaymentApi;
 import org.example.payment.service.model.BalanceResponse;
 import org.example.payment.service.model.PaymentRequest;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import reactor.core.publisher.Mono;
 
 @Controller
 @RequiredArgsConstructor
-public class PayController {
+public class PayController implements PaymentApi {
     private final PaymentService paymentService;
 
 

@@ -28,12 +28,12 @@ public class PaymentController {
     public Mono<String> getCartPage(Model model) {
 
 
-        Mono<BigDecimal> balanceMono = paymentApi.getBalance()
-                .map(BalanceResponse::getBalance)
-                .onErrorResume(error -> {
-                    System.out.println("Ошибка при обращении в платежный сервис: {}" + error.getMessage() + error);
-                    return Mono.just(BigDecimal.ONE.negate());
-                });
+        Mono<BigDecimal> balanceMono = cartService.getBalance();
+//                .map(BalanceResponse::getBalance)
+//                .onErrorResume(error -> {
+//                    System.out.println("Ошибка при обращении в платежный сервис: {}" + error.getMessage() + error);
+//                    return Mono.just(BigDecimal.ONE.negate());
+//                });
 
         Mono<OrderDto> cartMono = cartService.getBin();
 

@@ -1,6 +1,7 @@
 package org.example.intershop.service;
 
 import org.example.intershop.DTO.ItemDto;
+import org.example.intershop.models.entity.Order;
 import org.example.intershop.models.entity.OrderEntity;
 import org.example.intershop.models.entity.Position;
 import org.example.intershop.repository.OrderRepo;
@@ -74,7 +75,7 @@ public class OrderServiceTest {
         Long orderId = 1L;
         Long itemId = 100L;
 
-        OrderEntity savedOrder = new OrderEntity();
+        Order savedOrder = new Order();
         savedOrder.setId(orderId);
         savedOrder.setStatus(false);
 
@@ -85,16 +86,16 @@ public class OrderServiceTest {
         newPosition.setQuantity(1);
 
         when(orderRepo.existsByIdAndStatusFalse(orderId)).thenReturn(Mono.just(false));
-        when(orderRepo.save(any(OrderEntity.class))).thenReturn(Mono.just(savedOrder));
+        when(orderRepo.save(any(Order.class))).thenReturn(Mono.just(savedOrder));
 
 
         when(positionRepo.existsByItemIdAndStatusFalse(itemId)).thenReturn(Mono.just(false));
         when(positionRepo.save(any(Position.class))).thenReturn(Mono.just(newPosition));
 
-        StepVerifier.create(orderService.addPosition(orderId, itemId))
+        StepVerifier.create(orderService.addPosition( itemId))
                 .verifyComplete();
 
-        verify(orderRepo).save(any(OrderEntity.class));
+        verify(orderRepo).save(any(Order.class));
         verify(positionRepo).save(any(Position.class));
     }
 
@@ -103,7 +104,7 @@ public class OrderServiceTest {
         Long orderId = 2L;
         Long itemId = 200L;
 
-        OrderEntity existingOrder = new OrderEntity();
+        Order existingOrder = new Order();
         existingOrder.setId(orderId);
         existingOrder.setStatus(false);
 
@@ -121,7 +122,7 @@ public class OrderServiceTest {
         when(positionRepo.existsByItemIdAndStatusFalse(itemId)).thenReturn(Mono.just(false));
         when(positionRepo.save(any(Position.class))).thenReturn(Mono.just(existingPosition));
 
-        StepVerifier.create(orderService.addPosition(orderId, itemId))
+        StepVerifier.create(orderService.addPosition( itemId))
                 .verifyComplete();
 
         verify(orderRepo).findById(orderId);
