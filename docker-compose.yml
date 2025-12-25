@@ -7,10 +7,12 @@ services:
     container_name: payment-service-container
     ports:
       - 9090:9090
+    depends_on:
+      - keycloak
     restart: on-failure
     environment:
       - DEFAULT_BALANCE=3000
-
+      - OAUTH2_SERVER=http://keycloak:8080/realms/intershop
 
 
   intershop:
@@ -21,6 +23,8 @@ services:
       - 9091:9091
     depends_on:
       - intershop-db
+      - intershop-cache
+      - keycloak
     restart: on-failure
     environment:
         - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mydb
@@ -31,6 +35,7 @@ services:
         - PAYMENT_CLIENT_PORT=9090
         - spring.data.redis.host=intershop-cache-cache
         - spring.data.redis.port=6379
+        - OAUTH2_SERVER=http://keycloak:8080/realms/intershop
 
   intershop-db:
       image: postgres:16-alpine
@@ -48,3 +53,23 @@ services:
     image: redis:7.4.2-bookworm
     ports:
       - '6379:6379'
+
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    environment:
+      KC_DB: dev-mem
+      KC_LOG_LEVEL: INFO
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_IMPORT: "true"
+      KC_IMPORT_REALM: /opt/keycloak/realm-intershop.json
+    volumes:
+      - ./keycloak/realm-intershop.json:/opt/keycloak/data/import/realm-intershop.json:ro
+    command:
+      - start-dev
+      - --import-realm
+    ports:
+      - '8080:8080'

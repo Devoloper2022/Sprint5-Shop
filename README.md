@@ -9,7 +9,7 @@ _______
 -------
 
 Приложение написано на **Java 21**, использует **Spring Boot 3**, **Gradle**, **Thymeleaf**, **Hibernate**,
-**JUnit 5**, **Mockito**, **Testcontainers**, **Docker**, данные хранятся в БД **H2
+**JUnit 5**, **Mockito**, , **Spring Security**,**Testcontainers**, **Docker**, данные хранятся в БД **H2
 **, тесты выполняются в **H2**.
 -------
 
